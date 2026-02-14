@@ -1,6 +1,7 @@
 ---
 name: archive
-description: "This skill should be used when the user asks to 'archive done tasks', 'clean up the board', 'move completed items', 'tidy the docs', or any variant of archiving completed board items. Also triggered by '/board:archive'."
+description: "Moves completed board items (done tasks, done epics, processed notes/resources) to board/archive/ while preserving IDs and git history. Never archives ADRs. Activates when the user asks to archive, clean up, or tidy the board, or via '/board:archive'."
+allowed-tools: Bash, Read, Glob, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -10,7 +11,7 @@ Move completed items from active directories to `board/archive/`. The system spe
 
 ## Board Data
 
-The following board scan data is pre-loaded (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded board data:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
@@ -33,6 +34,7 @@ This handles `git mv` (or plain `mv` outside git repos), skips ADRs automaticall
 
 ## Notes
 
+- **Avoid redundant invocations** — if this skill was already invoked earlier in the session and the board has not been modified since, reuse the previous board data instead of invoking again
 - Files keep their original filename and ID after archiving
 - Archived items remain searchable via grep and git log
 - Links from other docs (e.g., `blocked_by`, `parent`) still work since the ID is stable

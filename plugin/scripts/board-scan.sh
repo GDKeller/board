@@ -46,7 +46,7 @@ parse_file() {
         fi
 
         # Detect frontmatter boundaries (must be exactly "---" with optional trailing whitespace)
-        local trimmed="${line%%[[:space:]]}"
+        local trimmed="${line%%[[:space:]]*}"
         if [[ "$trimmed" == "---" ]]; then
             if [[ $in_frontmatter -eq 1 ]]; then
                 past_frontmatter=1

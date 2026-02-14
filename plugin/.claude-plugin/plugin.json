@@ -4,5 +4,7 @@
   "description": "Plain-text project management board system for human-AI collaboration",
   "author": {
     "name": "Grant"
-  }
+  },
+  "license": "MIT",
+  "keywords": ["project-management", "task-tracking", "markdown", "plain-text"]
 }

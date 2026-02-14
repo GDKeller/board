@@ -37,6 +37,14 @@ for file in "$@"; do
 
     basename="$(basename "$file")"
 
+    # Verify file is within BOARD_ROOT (prevent path traversal)
+    real_board="$(cd "$BOARD_ROOT" && pwd -P)"
+    real_file="$(cd "$(dirname "$file")" && pwd -P)/$(basename "$file")"
+    if [[ "$real_file" != "$real_board/"* ]]; then
+        skipped+=("$file (outside board directory)")
+        continue
+    fi
+
     # Skip ADR files — they are never archived
     if [[ "$basename" == ADR-* ]]; then
         skipped+=("$file (ADR — never archived)")
@@ -62,7 +70,10 @@ for file in "$@"; do
             continue
         fi
     else
-        mv "$file" "$dest"
+        if ! mv "$file" "$dest" 2>/dev/null; then
+            skipped+=("$file (mv failed)")
+            continue
+        fi
     fi
     moved+=("$basename")
 done

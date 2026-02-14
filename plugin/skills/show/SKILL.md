@@ -1,6 +1,6 @@
 ---
 name: show
-description: "This skill should be used when the user asks to 'see the board', 'show tasks', 'check project status', 'view backlog', 'what's in progress', 'show project progress', or any variant of viewing the project board overview. Also triggered by '/board:show'."
+description: "Displays a formatted project board overview grouped by status, with priority sorting, epic progress, blocking relationships, and archive statistics. Activates when the user asks to see the board, show tasks, view backlog, or check project status, or via '/board:show'."
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob
 ---
@@ -11,7 +11,7 @@ Display a summary of the active project board. The system spec is at `board/refe
 
 ## Board Data
 
-Active items (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded active board data:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
@@ -55,6 +55,10 @@ Parse the board data above and display the board in this format:
 - Backlog sorted by priority (1=high first), then by ID
 - Blocked items last within backlog
 - Determine "blocked" by checking if all items in `blocked_by` have `status: done` — if any blocker is NOT done, the task is blocked
+
+## Notes
+
+- **Avoid redundant invocations** — if this skill was already invoked earlier in the session and the board has not been modified since, use the previous results instead of invoking again
 
 ## Epic Progress
 

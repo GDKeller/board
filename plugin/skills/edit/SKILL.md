@@ -1,7 +1,8 @@
 ---
 name: edit
-description: "This skill should be used when the user asks to 'edit a task', 'update a task', 'change task status', 'mark task as done', 'set priority', 'add a blocker', 'change task description', 'update an epic', or any variant of modifying an existing board item. Also triggered by '/board:edit'."
+description: "Modifies existing board items — changes status, priority, blockers, titles, and body content with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, or change a board item, or via '/board:edit'."
 argument-hint: "[item-id] [field] [value]"
+allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -17,7 +18,7 @@ If the item ID is ambiguous or missing, search by keyword using Glob on filename
 
 ## Board Data
 
-The following board scan data is pre-loaded (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded board data:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
@@ -94,3 +95,7 @@ Only `1` (high), `2` (medium), or `3` (low) are valid. Reject other values.
 2. If renaming, use `git mv` for the file and update the `# heading`
 3. Show a summary of what changed: `TASK-0003: status backlog → current`
 4. If the edit unblocks other tasks (a blocker was marked `done`), mention which tasks are now unblocked
+
+## Notes
+
+- **Avoid redundant invocations** — if this skill was already invoked earlier in the session and the board has not been modified since, reuse the previous board data instead of invoking again

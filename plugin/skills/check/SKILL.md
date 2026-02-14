@@ -1,6 +1,6 @@
 ---
 name: check
-description: "This skill should be used when the user asks to 'check the board', 'find related tasks', 'what's tracked for this area', 'is this already on the board', or when starting work on a feature to find related board context. Also triggered by '/board:check'. Can be activated autonomously when investigating a feature area or making changes that might overlap with existing tracked work."
+description: "Performs read-only board lookups to find tasks, ADRs, references, and resources relevant to the current work area. Activates when the user asks to check the board, find related tasks, or verify if something is tracked, or via '/board:check'. Also activates autonomously when investigating a feature area that might overlap with existing tracked work."
 argument-hint: "[keyword or area]"
 allowed-tools: Bash, Read, Grep, Glob
 ---
@@ -39,7 +39,7 @@ From the current work, identify:
 
 ### 2. Filter the Board Data
 
-The following board scan data is pre-loaded (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded board data:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 

@@ -50,6 +50,10 @@ doc_ids_file="$BOARD_ROOT/.doc-ids"
 if [[ -f "$doc_ids_file" ]]; then
     tracked_id=$(grep "^${TYPE}=" "$doc_ids_file" 2>/dev/null | cut -d= -f2)
     if [[ -n "$tracked_id" ]]; then
+        if ! [[ "$tracked_id" =~ ^[0-9]+$ ]]; then
+            echo "Error: Corrupted .doc-ids entry for $TYPE: '$tracked_id'" >&2
+            exit 1
+        fi
         tracked_num=$((10#$tracked_id))
         if [[ $tracked_num -gt $max_id ]]; then
             max_id=$tracked_num

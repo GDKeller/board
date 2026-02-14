@@ -1,7 +1,8 @@
 ---
 name: add
-description: "This skill should be used when the user asks to 'add a task', 'create an epic', 'write an ADR', 'add a note', 'create a reference doc', 'track a resource', or any variant of creating a new board item. Also triggered by '/board:add'."
+description: "Creates new board items (tasks, epics, ADRs, notes, references, resources) with correct frontmatter, ID assignment, and duplicate detection. Activates when the user asks to add, create, or track a new board item, or via '/board:add'."
 argument-hint: "[type] [title]"
+allowed-tools: Bash, Read, Write, Glob, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -11,7 +12,7 @@ Create a new item in the `board/` project management system. The system spec is 
 
 ## Existing Board Items
 
-The following board scan data is pre-loaded for duplicate detection (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded board data for duplicate detection:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 

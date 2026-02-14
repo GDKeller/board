@@ -1,6 +1,7 @@
 ---
 name: update
-description: "This skill should be used when the user asks to 'update the board', 'sync tasks', 'check what's changed', 'refresh task statuses', or 'maintain the project board'. Also triggered by '/board:update'. Can be activated autonomously after completing significant coding work (feature implementations, bug fixes, refactors) that may have resolved or affected tracked tasks."
+description: "Reconciles the project board with the codebase by analyzing git history and code state to detect completed tasks, unblocked items, stale work, and new tasks needed. Activates when the user asks to update or sync the board, or via '/board:update'. Also activates autonomously after completing significant coding work that may have resolved tracked tasks."
+allowed-tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 ---
 
 # Board Update
@@ -9,7 +10,7 @@ Analyze the codebase and git history to automatically reconcile the project boar
 
 ## Board Data
 
-Active items (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+Pre-loaded active board data:
 
 !`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
@@ -87,6 +88,8 @@ Present ALL proposed changes as a single summary before making any edits:
 ### Unblocked
 - TASK-0005: blocker TASK-0003 is now done
 ```
+
+**Avoid redundant invocations** — if this skill was already invoked earlier in the session and the board has not been modified since, reuse the previous board data instead of invoking again.
 
 Ask the user to approve, reject, or cherry-pick which changes to apply. Then execute only the approved changes:
 
