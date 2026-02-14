@@ -10,26 +10,15 @@ Validate board files for structural and data issues, and help fix any problems f
 
 ## Steps
 
-### 1. Run the Lint Script
+### 1. Lint Results
 
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh
-```
+The following lint output is pre-loaded (checks: frontmatter validity, required fields, status/priority values, directory placement, filename patterns, duplicate IDs, ADRs in archive, broken references):
 
-This checks all board files for:
-- Missing or invalid YAML frontmatter
-- Missing required fields per type
-- Invalid status values
-- Invalid priority values (must be 1, 2, or 3)
-- Files in wrong directories (e.g., TASK in planning/)
-- Filename pattern violations
-- Duplicate IDs
-- ADRs in archive (never allowed)
-- Broken `blocked_by` references
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh`
 
 ### 2. Interpret Results
 
-Parse the output. Each line is either:
+Parse the lint output above. Each line is either:
 - `ERROR: <file>: <message>` — must be fixed
 - `WARN:  <file>: <message>` — should be reviewed
 

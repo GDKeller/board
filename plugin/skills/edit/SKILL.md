@@ -1,6 +1,7 @@
 ---
 name: edit
 description: "This skill should be used when the user asks to 'edit a task', 'update a task', 'change task status', 'mark task as done', 'set priority', 'add a blocker', 'change task description', 'update an epic', or any variant of modifying an existing board item. Also triggered by '/board:edit'."
+argument-hint: "[item-id] [field] [value]"
 disable-model-invocation: true
 ---
 
@@ -14,11 +15,17 @@ The user provides the item ID and what to change: `/board:edit TASK-0003 status 
 
 If the item ID is ambiguous or missing, search by keyword using Glob on filenames and ask the user to confirm which item.
 
+## Board Data
+
+The following board scan data is pre-loaded (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+
 ## Locate the Item
 
-1. Glob for `board/**/<TYPE>-<ID>_*.md` (search active directories first, then `board/archive/`)
+1. Find the item in the board data above by matching the ID from `$ARGUMENTS`
 2. Read the file with `limit: 15` to get current frontmatter
-3. If not found, report the item doesn't exist
+3. If not found in the active board data, check `board/archive/` with Glob before reporting the item doesn't exist
 
 ## Validation Rules
 

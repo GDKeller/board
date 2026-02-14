@@ -1,12 +1,21 @@
 ---
 name: add
 description: "This skill should be used when the user asks to 'add a task', 'create an epic', 'write an ADR', 'add a note', 'create a reference doc', 'track a resource', or any variant of creating a new board item. Also triggered by '/board:add'."
+argument-hint: "[type] [title]"
 disable-model-invocation: true
 ---
 
 # Add Board Item
 
 Create a new item in the `board/` project management system. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+
+## Existing Board Items
+
+The following board scan data is pre-loaded for duplicate detection (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+
+Before creating, check if a similar item already exists. If a close match is found, ask the user if they still want to create a new one.
 
 ## Arguments
 

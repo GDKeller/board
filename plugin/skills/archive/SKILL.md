@@ -8,15 +8,15 @@ disable-model-invocation: true
 
 Move completed items from active directories to `board/archive/`. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
 
+## Board Data
+
+The following board scan data is pre-loaded (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
+
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+
 ## Steps
 
-1. Run the board scan script to get all items with their statuses in one call:
-
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh
-```
-
-Filter for items with terminal status (excluding archived items and ADRs):
+1. Filter the board data above for items with terminal status (excluding archived items and ADRs):
    - Tasks with `status: done`
    - Epics with `status: done`
    - Notes with `status: processed`

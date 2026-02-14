@@ -2,23 +2,26 @@
 name: show
 description: "This skill should be used when the user asks to 'see the board', 'show tasks', 'check project status', 'view backlog', 'what's in progress', 'show project progress', or any variant of viewing the project board overview. Also triggered by '/board:show'."
 disable-model-invocation: true
+allowed-tools: Bash, Read, Grep, Glob
 ---
 
 # Board Overview
 
 Display a summary of the active project board. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
 
-## Steps
+## Board Data
 
-1. Run the board scan script to get all items with parsed frontmatter in one call:
+Active items (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
 
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh
-```
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
-This outputs tab-separated data: `filepath, type, status, priority, blocked_by, parent, title` for every board file (active + archived).
+Archive counts (type and count):
 
-2. Parse the output and display the board in this format:
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --archive-summary`
+
+## Instructions
+
+Parse the board data above and display the board in this format:
 
 ```
 ## Project Board

@@ -7,21 +7,25 @@ description: "This skill should be used when the user asks to 'update the board'
 
 Analyze the codebase and git history to automatically reconcile the project board with reality. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
 
-## Skill Composition
+## Board Data
 
-This skill delegates to other board skills to avoid duplicating logic and save context:
+Active items (tab-separated: filepath, type, status, priority, blocked_by, parent, title):
 
-- **`/board:show`** — get current board state (rather than re-scanning and parsing files)
-- **`/board:add`** — create new tasks identified during reconciliation
-- **`/board:archive`** — archive completed items
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
 
-Invoke these skills directly during execution instead of reimplementing their logic.
+Archive counts:
+
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --archive-summary`
 
 ## Steps
 
-### 1. Get Current Board State
+### 1. Review Board State
 
-Invoke `/board:show` to get the full board overview. This provides all active items with their statuses, priorities, blocked-by states, and epic progress — without duplicating the scanning logic.
+Parse the pre-loaded board data above. Identify:
+- All items with `status: backlog` or `status: current` (candidates for completion)
+- Epics and their child tasks (via `parent` field)
+- Blocked items and their blockers
+- Items with terminal status (`done`, `processed`) that should be archived
 
 ### 2. Gather Codebase Context
 
@@ -88,4 +92,4 @@ Ask the user to approve, reject, or cherry-pick which changes to apply. Then exe
 
 - **Status updates**: Use `/board:edit` to update status fields
 - **New tasks**: Invoke `/board:add` for each approved new task
-- **Archiving**: Invoke `/board:archive` to handle completed items
+- **Archiving**: Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh board <file1> <file2> ...` directly for approved items

@@ -1,12 +1,7 @@
 ---
 name: init
 description: "Initialize the board system in the current project"
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - AskUserQuestion
+allowed-tools: Bash, Read, Write, Edit, AskUserQuestion
 ---
 
 # Initialize Board System

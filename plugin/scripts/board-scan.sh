@@ -1,16 +1,33 @@
 #!/usr/bin/env bash
 # board-scan.sh — Parse all active board files and output structured data.
-# Usage: board-scan.sh [board_root]
+# Usage: board-scan.sh [board_root] [--active] [--archive-summary]
 #   board_root defaults to ./board
+#   --active            skip archive/ directory (smaller output for most operations)
+#   --archive-summary   output only per-type counts for archive (e.g., "task	12")
 #
 # Output format (tab-separated, one line per file):
 #   filepath	type	status	priority	blocked_by	parent	title
 #
-# Files from board/archive/ are included alongside active files.
+# Without --active, files from board/archive/ are included alongside active files.
 
 set -euo pipefail
 
 BOARD_ROOT="${1:-./board}"
+INCLUDE_ARCHIVE=1
+ARCHIVE_SUMMARY=0
+for arg in "$@"; do
+    case "$arg" in
+        --active) INCLUDE_ARCHIVE=0 ;;
+        --archive-summary) ARCHIVE_SUMMARY=1; INCLUDE_ARCHIVE=0 ;;
+    esac
+done
+
+# Guard: if no board directory exists, output header only
+if [[ ! -d "$BOARD_ROOT" ]]; then
+    printf 'filepath\ttype\tstatus\tpriority\tblocked_by\tparent\ttitle\n'
+    printf '# No board directory found at %s. Run /board:init to set up.\n' "$BOARD_ROOT"
+    exit 0
+fi
 
 parse_file() {
     local file="$1"
@@ -133,10 +150,22 @@ for dir in tasks planning reference resources; do
     done
 done
 
-# Scan archive
-if [[ -d "$BOARD_ROOT/archive" ]]; then
+# Scan archive (unless --active or --archive-summary flag is set)
+if [[ $INCLUDE_ARCHIVE -eq 1 && -d "$BOARD_ROOT/archive" ]]; then
     for file in "$BOARD_ROOT/archive"/*.md; do
         [[ -f "$file" ]] || continue
         parse_file "$file"
+    done
+fi
+
+# Archive summary: count files by type prefix instead of parsing each one
+if [[ $ARCHIVE_SUMMARY -eq 1 && -d "$BOARD_ROOT/archive" ]]; then
+    printf '\n# Archive counts (type\tcount)\n'
+    for prefix in TASK EPIC ADR NOTE REFE RESO; do
+        count=0
+        for f in "$BOARD_ROOT/archive/${prefix}"-*.md; do
+            [[ -f "$f" ]] && count=$((count + 1))
+        done
+        [[ $count -gt 0 ]] && printf '%s\t%s\n' "$prefix" "$count"
     done
 fi
