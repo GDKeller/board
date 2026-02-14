@@ -36,16 +36,6 @@ plugin/                       # Claude Code plugin (primary distribution)
     ├── REFE-0002_board-system-quickref.md
     └── claude-md-snippet.md
 
-standalone/                  # Standalone skills (no plugin dependency)
-└── skills/                  # Same 7 skills, using Glob/Grep instead of scripts
-    ├── board-add/
-    ├── board-show/
-    ├── board-check/
-    ├── board-edit/
-    ├── board-update/
-    ├── board-archive/
-    └── board-lint/
-
 board/                       # Example board (also used for self-management)
 ├── tasks/                   # TASK-* files (actionable work items)
 ├── planning/                # EPIC-*, ADR-*, NOTE-* files
@@ -99,12 +89,6 @@ Scan both `board/` and `board/archive/` for the highest existing ID of each type
 This repo has no build system, tests, or linter — it's pure Markdown/YAML files. Changes involve editing document content, skill definitions, scripts, or the system specification itself.
 
 When modifying the board system spec (`REFE-0001`) or quick reference (`REFE-0002`), ensure they stay in sync. The quick reference is a condensed version of the spec — not a separate document with independent rules.
-
-### Plugin vs Standalone Skills
-
-The **plugin** (`plugin/`) is the primary distribution. Its skills reference `${CLAUDE_PLUGIN_ROOT}/scripts/` for efficient operation (single Bash call instead of multiple Glob/Grep/Read calls).
-
-The **standalone skills** (`standalone/skills/`) are a fallback for users who copy skills directly into `~/.claude/skills/` without installing the plugin. They use Glob/Grep/Read instead of scripts. When modifying a skill, update both versions to stay in sync.
 
 ### Scripts
 
