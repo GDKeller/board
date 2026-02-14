@@ -1,5 +1,5 @@
 ---
-name: board-show
+name: show
 description: "This skill should be used when the user asks to 'see the board', 'show tasks', 'check project status', 'view backlog', 'what's in progress', 'show project progress', or any variant of viewing the project board overview. Also triggered by '/board:show'."
 disable-model-invocation: true
 ---

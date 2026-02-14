@@ -1,6 +1,6 @@
 ---
-name: board-add
-description: "Create a new board item (task, epic, ADR, note, reference, or resource). Use when the user wants to add a task, create an epic, write an ADR, add a note, create a reference doc, or track a resource."
+name: add
+description: "This skill should be used when the user asks to 'add a task', 'create an epic', 'write an ADR', 'add a note', 'create a reference doc', 'track a resource', or any variant of creating a new board item. Also triggered by '/board:add'."
 disable-model-invocation: true
 ---
 
@@ -16,9 +16,13 @@ If no type is given, ask the user what type of item to create.
 
 ## Determine Next ID
 
-1. Scan ALL directories including `board/archive/` for files matching the type prefix (e.g., `TASK-*`)
-2. Find the highest existing ID number
-3. Use the next number (zero-padded to 4 digits)
+Run the ID assignment script:
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE>
+```
+
+This scans all directories (including `board/archive/` and `.doc-ids`) and returns the next available 4-digit zero-padded ID.
 
 ## Create the File
 

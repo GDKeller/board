@@ -9,22 +9,52 @@ BoardPM is a plain-text project management framework for human-AI collaboration.
 ## Repository Structure
 
 ```
-board/                    # Core board system (the product)
-├── tasks/               # TASK-* files (actionable work items)
-├── planning/            # EPIC-*, ADR-*, NOTE-* files
-├── reference/           # REFE-* files (evergreen knowledge)
-├── resources/           # RESO-* files (external material inbox)
-└── archive/             # Completed items (ADRs never archived)
+plugin/                       # Claude Code plugin (primary distribution)
+├── .claude-plugin/
+│   └── plugin.json          # Plugin manifest
+├── commands/
+│   └── init.md              # /board:init — scaffold board into a project
+├── skills/                  # 7 plugin skills (use scripts for efficiency)
+│   ├── add/                 # /board:add — create new board items
+│   ├── show/                # /board:show — display board overview
+│   ├── check/               # /board:check — search for relevant context
+│   ├── edit/                # /board:edit — modify existing board items
+│   ├── update/              # /board:update — reconcile board with codebase
+│   ├── archive/             # /board:archive — archive completed items
+│   └── lint/                # /board:lint — validate board file health
+├── scripts/                 # Bash helpers (save context vs Glob/Grep)
+│   ├── board-scan.sh        # Parse all board files to TSV
+│   ├── board-init.sh        # Scaffold board directories + templates
+│   ├── board-lint.sh        # Validate board files for errors
+│   ├── next-id.sh           # Determine next available ID per type
+│   ├── validate-status.sh   # Validate status transitions
+│   └── archive-batch.sh     # Batch git mv to archive
+├── hooks/
+│   └── hooks.json           # SessionStart hook → auto-lint
+└── templates/               # Board template files for init
+    ├── REFE-0001_board-system-spec.md
+    ├── REFE-0002_board-system-quickref.md
+    └── claude-md-snippet.md
 
-claude/skills/           # Claude Code skills (slash commands)
-├── board-add/           # /board:add — create new board items
-├── board-show/          # /board:show — display board overview
-├── board-check/         # /board:check — search for relevant context
-├── board-update/        # /board:update — reconcile board with codebase
-└── board-archive/       # /board:archive — archive completed items
+standalone/                  # Standalone skills (no plugin dependency)
+└── skills/                  # Same 7 skills, using Glob/Grep instead of scripts
+    ├── board-add/
+    ├── board-show/
+    ├── board-check/
+    ├── board-edit/
+    ├── board-update/
+    ├── board-archive/
+    └── board-lint/
 
-implementation-guide.md  # Setup instructions for installing in projects
-claude-md-snippet.md     # Template snippet for project CLAUDE.md files
+board/                       # Example board (also used for self-management)
+├── tasks/                   # TASK-* files (actionable work items)
+├── planning/                # EPIC-*, ADR-*, NOTE-* files
+├── reference/               # REFE-* files (evergreen knowledge)
+├── resources/               # RESO-* files (external material inbox)
+└── archive/                 # Completed items (ADRs never archived)
+
+docs/                        # Documentation
+└── implementation-guide.md  # Setup instructions for installing in projects
 ```
 
 ## Key Specifications
@@ -66,8 +96,16 @@ Scan both `board/` and `board/archive/` for the highest existing ID of each type
 
 ## Working on This Repository
 
-This repo has no build system, tests, or linter — it's pure Markdown/YAML files. Changes involve editing document content, skill definitions, or the system specification itself.
+This repo has no build system, tests, or linter — it's pure Markdown/YAML files. Changes involve editing document content, skill definitions, scripts, or the system specification itself.
 
 When modifying the board system spec (`REFE-0001`) or quick reference (`REFE-0002`), ensure they stay in sync. The quick reference is a condensed version of the spec — not a separate document with independent rules.
 
-When modifying skills in `claude/skills/`, each skill is a single `SKILL.md` file containing the skill's system prompt and instructions.
+### Plugin vs Standalone Skills
+
+The **plugin** (`plugin/`) is the primary distribution. Its skills reference `${CLAUDE_PLUGIN_ROOT}/scripts/` for efficient operation (single Bash call instead of multiple Glob/Grep/Read calls).
+
+The **standalone skills** (`standalone/skills/`) are a fallback for users who copy skills directly into `~/.claude/skills/` without installing the plugin. They use Glob/Grep/Read instead of scripts. When modifying a skill, update both versions to stay in sync.
+
+### Scripts
+
+All scripts in `plugin/scripts/` are bash 3.2+ compatible (macOS default). They use `set -euo pipefail` and avoid bash 4+ features (no associative arrays, no `declare -A`).

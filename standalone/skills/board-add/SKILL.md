@@ -16,13 +16,12 @@ If no type is given, ask the user what type of item to create.
 
 ## Determine Next ID
 
-Run the ID assignment script:
+Scan all directories (including `board/archive/`) for the highest existing ID of the requested type:
 
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE>
-```
-
-This scans all directories (including `board/archive/` and `.doc-ids`) and returns the next available 4-digit zero-padded ID.
+1. Use Glob to find all files matching the type prefix: `board/*/<TYPE>-*.md` and `board/archive/<TYPE>-*.md`
+2. Extract the numeric portion from each filename (e.g., `TASK-0014_...` → `14`)
+3. If a `board/.doc-ids` file exists, also check the tracked value for this type
+4. The next ID is `max + 1`, zero-padded to 4 digits
 
 ## Create the File
 

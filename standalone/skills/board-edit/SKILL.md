@@ -24,7 +24,7 @@ If the item ID is ambiguous or missing, search by keyword using Glob on filename
 
 ### Status Transitions
 
-Only allow valid transitions per type:
+Valid forward transitions:
 
 | Type | Valid Transitions |
 |------|-------------------|
@@ -35,6 +35,8 @@ Only allow valid transitions per type:
 | adr | `active` → `superseded` or `active` → `deprecated` |
 
 Backward transitions (e.g., `done` → `backlog`) are allowed but should confirm with the user first — they may indicate a reopened task.
+
+Invalid transitions (e.g., `done` → `inbox`) must be rejected.
 
 ### ADR Immutability
 

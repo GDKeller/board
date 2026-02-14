@@ -1,6 +1,6 @@
 ---
-name: board-archive
-description: "Archive completed board items. Use when the user asks to archive done tasks, clean up the board, move completed items, or tidy the docs."
+name: archive
+description: "This skill should be used when the user asks to 'archive done tasks', 'clean up the board', 'move completed items', 'tidy the docs', or any variant of archiving completed board items. Also triggered by '/board:archive'."
 disable-model-invocation: true
 ---
 
@@ -10,13 +10,25 @@ Move completed items from active directories to `board/archive/`. The system spe
 
 ## Steps
 
-1. Scan `board/tasks/`, `board/planning/`, and `board/resources/` for items with terminal status:
+1. Run the board scan script to get all items with their statuses in one call:
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh
+```
+
+Filter for items with terminal status (excluding archived items and ADRs):
    - Tasks with `status: done`
    - Epics with `status: done`
    - Notes with `status: processed`
    - Resources with `status: processed`
 2. List all items found and ask the user to confirm which to archive
-3. Move confirmed files to `board/archive/` using `git mv` (preserves git history)
+3. Move confirmed files using the archive script:
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh board <file1> <file2> ...
+```
+
+This handles `git mv` (or plain `mv` outside git repos), skips ADRs automatically, and reports results.
 4. Show a summary of what was moved
 
 ## Notes

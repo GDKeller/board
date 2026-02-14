@@ -6,8 +6,6 @@ allowed-tools:
   - Read
   - Write
   - Edit
-  - Glob
-  - Grep
   - AskUserQuestion
 ---
 
@@ -24,39 +22,23 @@ Check if a `board/` directory already exists in the project root.
 - If it exists, inform the user and ask if they want to re-initialize (which would overwrite spec files but preserve existing board items)
 - If it doesn't exist, proceed with full initialization
 
-### 2. Create Directory Structure
+### 2. Run Init Script
 
-Create the board directories:
+Run the initialization script to create directories, copy specs, and set up ID tracking:
 
 ```bash
-mkdir -p board/{tasks,planning,reference,resources,archive}
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-init.sh ${CLAUDE_PLUGIN_ROOT}
 ```
 
-### 3. Copy Spec Files
+This creates in one shot:
+- `board/{tasks,planning,reference,resources,archive}/`
+- `board/reference/REFE-0001_board-system-spec.md`
+- `board/reference/REFE-0002_board-system-quickref.md`
+- `board/.doc-ids` (ID tracking file)
 
-Copy the board system specification and quick reference from the plugin templates into the project:
+The script is idempotent — it skips files/directories that already exist.
 
-- Copy `${CLAUDE_PLUGIN_ROOT}/templates/REFE-0001_board-system-spec.md` to `board/reference/REFE-0001_board-system-spec.md`
-- Copy `${CLAUDE_PLUGIN_ROOT}/templates/REFE-0002_board-system-quickref.md` to `board/reference/REFE-0002_board-system-quickref.md`
-
-Use the Read tool to read each template file, then the Write tool to write it to the destination.
-
-### 4. Create ID Tracking File
-
-Create `board/.doc-ids` with initial values:
-
-```
-TASK=0000
-EPIC=0000
-ADR=0000
-REFE=0002
-RESO=0000
-NOTE=0000
-```
-
-REFE starts at 0002 because REFE-0001 and REFE-0002 are the spec files just created.
-
-### 5. Update CLAUDE.md
+### 3. Update CLAUDE.md
 
 Read `${CLAUDE_PLUGIN_ROOT}/templates/claude-md-snippet.md` for the snippet content.
 
@@ -65,7 +47,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/templates/claude-md-snippet.md` for the snippet cont
   - If no, append the snippet to the end of the file
 - If no `CLAUDE.md` exists, ask the user if they want one created with the board snippet
 
-### 6. Summary
+### 4. Summary
 
 Display what was created:
 
@@ -81,6 +63,7 @@ Board system initialized:
 Available commands:
   /board:show           — view board overview
   /board:add            — create new items
+  /board:edit           — modify existing items
   /board:check          — find related board context
   /board:update         — reconcile board with codebase
   /board:archive        — archive completed items

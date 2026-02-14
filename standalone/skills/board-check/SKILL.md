@@ -20,12 +20,12 @@ This skill is for **consulting** the board, not modifying it. Use `board-update`
 
 This skill must be lightweight. Follow this escalation:
 
-1. **Board scan** — run the scan script to get all items with metadata in one call. Cost: one Bash invocation.
-2. **Filter by title** — match filenames/titles against current work keywords. Cost: zero (in-memory).
+1. **Glob filenames** — scan `board/` for filenames matching keywords. Cost: one Glob call.
+2. **Grep content** — if filenames aren't enough, Grep for keywords in frontmatter/titles. Cost: one Grep call.
 3. **Read with limit** — if a file looks relevant, use `Read` with `limit: 15` to get frontmatter + title. Do NOT read entire files at this stage. Cost: low.
 4. **Full read** — only read the full body of a file if the user explicitly asks about it, or if the title strongly matches and you need the details to proceed. Cost: moderate.
 
-Never read all doc files. Never read a file body just to check if it's relevant — the title from the scan tells you that.
+Never read all doc files. Never read a file body just to check if it's relevant — the title from the filename tells you that.
 
 ## Steps
 
@@ -38,13 +38,14 @@ From the current work, identify:
 
 ### 2. Scan the Board
 
-Run the board scan script to get all items with parsed frontmatter:
-
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh
+Use Glob to find all board files:
+```
+board/**/*.md
 ```
 
-Filter the output by matching titles and filenames against the keywords from step 1. Look for:
+Filter filenames against the keywords from step 1. If filenames aren't specific enough, use Grep to search within file contents (limit to frontmatter and headings).
+
+Look for:
 
 | Type | What to look for |
 |------|-----------------|

@@ -10,20 +10,37 @@ Move completed items from active directories to `board/archive/`. The system spe
 
 ## Steps
 
-1. Run the board scan script to get all items with their statuses in one call:
+### 1. Find Completed Items
 
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh
-```
+Scan all board files to identify items with terminal statuses:
 
-Filter for items with terminal status (excluding archived items and ADRs):
+1. Use Glob to find all `.md` files in `board/tasks/`, `board/planning/`, `board/resources/`
+2. For each file, use Read with `limit: 10` to extract `type` and `status` from frontmatter
+3. Filter for items with terminal status:
    - Tasks with `status: done`
    - Epics with `status: done`
    - Notes with `status: processed`
    - Resources with `status: processed`
-2. List all items found and ask the user to confirm which to archive
-3. Move confirmed files to `board/archive/` using `git mv` (preserves git history)
-4. Show a summary of what was moved
+
+**Important**: ADRs are NEVER archived — they stay in `board/planning/` permanently regardless of status.
+
+### 2. Confirm with User
+
+List all items found and ask the user to confirm which to archive.
+
+### 3. Move Files
+
+For each confirmed file, use `git mv` (to preserve history) to move the file to `board/archive/`:
+
+```bash
+git mv board/tasks/TASK-0003_add-caching.md board/archive/TASK-0003_add-caching.md
+```
+
+If not in a git repo, use plain `mv` instead. Create `board/archive/` if it doesn't exist.
+
+### 4. Show Summary
+
+Show a summary of what was moved.
 
 ## Notes
 

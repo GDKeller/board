@@ -34,6 +34,10 @@ for file in "$BOARD_ROOT"/*/"${TYPE}"-*.md "$BOARD_ROOT"/archive/"${TYPE}"-*.md;
     # Extract the numeric ID: TYPE-NNNN_...
     id_str="${basename#"${TYPE}"-}"
     id_str="${id_str%%_*}"
+    # Skip non-numeric IDs (e.g., TASK-draft_something.md)
+    if ! [[ "$id_str" =~ ^[0-9]+$ ]]; then
+        continue
+    fi
     # Convert to integer (strip leading zeros)
     id_num=$((10#$id_str))
     if [[ $id_num -gt $max_id ]]; then

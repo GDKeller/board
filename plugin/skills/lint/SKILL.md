@@ -1,0 +1,75 @@
+---
+name: lint
+description: "This skill should be used when the user asks to 'lint the board', 'validate board files', 'check board health', 'fix board issues', or when board-lint.sh reports errors on session startup. Also triggered by '/board:lint'."
+disable-model-invocation: true
+---
+
+# Board Lint
+
+Validate board files for structural and data issues, and help fix any problems found. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+
+## Steps
+
+### 1. Run the Lint Script
+
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh
+```
+
+This checks all board files for:
+- Missing or invalid YAML frontmatter
+- Missing required fields per type
+- Invalid status values
+- Invalid priority values (must be 1, 2, or 3)
+- Files in wrong directories (e.g., TASK in planning/)
+- Filename pattern violations
+- Duplicate IDs
+- ADRs in archive (never allowed)
+- Broken `blocked_by` references
+
+### 2. Interpret Results
+
+Parse the output. Each line is either:
+- `ERROR: <file>: <message>` — must be fixed
+- `WARN:  <file>: <message>` — should be reviewed
+
+If no issues found, report that the board is healthy and stop.
+
+### 3. Present Issues
+
+Group issues by file and present them clearly:
+
+```
+## Board Health Report
+
+### Errors (must fix)
+- TASK-0003_add-caching.md: Invalid status 'wip' (must be backlog|current|done)
+- ADR-0001_chose-redis.md: ADR is in archive/ — must move back to planning/
+
+### Warnings (review)
+- RESO-0002_redis-article.md: Missing field: url
+```
+
+### 4. Offer Fixes
+
+For each error, offer to fix it:
+
+- **Invalid status**: Ask the user what the correct status should be, then use `/board:edit` to update
+- **Wrong directory**: Offer to move the file to the correct directory via `git mv`
+- **Missing fields**: Ask the user for the value, then add it to frontmatter
+- **Duplicate IDs**: Offer to reassign one of the duplicates using `next-id.sh`
+- **ADR in archive**: Offer to move it back to `board/planning/`
+- **Broken references**: Ask if the reference should be removed or if a missing file should be created
+
+### 5. LLM-Only Checks
+
+After script-based validation, perform checks that require language understanding:
+
+- **Task title mood**: Scan task files and check if titles use imperative mood (verb-first). Flag noun phrases like "User Authentication" that should be "Add user authentication".
+- **ADR completeness**: Check if ADRs have a "Spawned Items" section. If missing, flag it.
+
+Present these as suggestions, not errors — they require judgment.
+
+### 6. Re-validate
+
+After fixing issues, run the lint script again to confirm all errors are resolved.
