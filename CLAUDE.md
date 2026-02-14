@@ -93,3 +93,28 @@ When modifying the board system spec (`REFE-0001`) or quick reference (`REFE-000
 ### Scripts
 
 All scripts in `plugin/scripts/` are bash 3.2+ compatible (macOS default). They use `set -euo pipefail` and avoid bash 4+ features (no associative arrays, no `declare -A`).
+
+Example invocations from the repo root:
+
+```bash
+bash plugin/scripts/board-scan.sh ./board --active          # TSV of active items
+bash plugin/scripts/board-scan.sh ./board --archive-summary  # Archive counts
+bash plugin/scripts/board-lint.sh ./board                    # Validate all files
+bash plugin/scripts/next-id.sh TASK ./board                  # Next TASK ID
+bash plugin/scripts/validate-status.sh task backlog current  # Check transition
+bash plugin/scripts/archive-batch.sh ./board board/tasks/TASK-0001_example.md
+```
+
+### Plugin Design Patterns
+
+- **Dynamic context injection**: Skills use `` !`command` `` syntax to run `board-scan.sh` at activation time, injecting fresh board data without stale caches
+- **TSV output format**: `board-scan.sh` outputs tab-separated data with a header row — compact and self-documenting
+- **`--active` flag**: Excludes `board/archive/` to keep injected context proportional to active work. Critical for scaling — at 50+ active items, injection approaches context budget limits
+- **Progressive escalation**: Skills filter by title (free) → Read with limit:15 (low cost) → full read (moderate) to minimize context consumption
+- **Scripts over LLM generation**: Deterministic operations (ID assignment, status validation, linting) run as bash scripts whose output enters context — the script source never does
+
+### Gotchas
+
+- **Plugin cache copy**: Claude Code copies plugins to a cache directory. Paths that traverse outside the plugin root (`../`) will not resolve after installation. Always use `${CLAUDE_PLUGIN_ROOT}` for script references.
+- **Bash 3.2 constraint**: macOS ships bash 3.2 by default. No associative arrays (`declare -A`), no `readarray`/`mapfile`, no `${var,,}` lowercase syntax.
+- **Spec sync obligation**: `REFE-0001` (full spec) and `REFE-0002` (quick ref) must stay in sync. The quick ref is a condensed derivative, not an independent document.
