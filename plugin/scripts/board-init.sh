@@ -6,8 +6,6 @@
 #
 # Creates:
 #   board/{tasks,planning,reference,resources,archive}/
-#   board/reference/REFE-0001_board-system-spec.md
-#   board/reference/REFE-0002_board-system-quickref.md
 #   board/.doc-ids
 #
 # Exits with 0 on success. Prints what was created to stdout.
@@ -45,17 +43,6 @@ for dir in tasks planning reference resources archive; do
     fi
 done
 
-# Copy spec files
-for spec in REFE-0001_board-system-spec.md REFE-0002_board-system-quickref.md; do
-    dest="$BOARD_ROOT/reference/$spec"
-    if [[ ! -f "$dest" ]]; then
-        cp "$TEMPLATES/$spec" "$dest"
-        created+=("$dest")
-    else
-        skipped+=("$dest (already exists)")
-    fi
-done
-
 # Create .doc-ids tracking file
 doc_ids="$BOARD_ROOT/.doc-ids"
 if [[ ! -f "$doc_ids" ]]; then
@@ -63,7 +50,7 @@ if [[ ! -f "$doc_ids" ]]; then
 TASK=0000
 EPIC=0000
 ADR=0000
-REFE=0002
+REFE=0000
 RESO=0000
 NOTE=0000
 EOF

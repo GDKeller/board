@@ -8,5 +8,3 @@ This project uses a structured board system for project management.
 - Use `/board:add` to create new items
 - Use `/board:update` after completing significant work to reconcile the board
 - Use `/board:check` when starting work to find related board context
-
-@board/reference/REFE-0002_board-system-quickref.md

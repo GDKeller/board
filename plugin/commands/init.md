@@ -27,8 +27,6 @@ bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-init.sh ${CLAUDE_PLUGIN_ROOT}
 
 This creates in one shot:
 - `board/{tasks,planning,reference,resources,archive}/`
-- `board/reference/REFE-0001_board-system-spec.md`
-- `board/reference/REFE-0002_board-system-quickref.md`
 - `board/.doc-ids` (ID tracking file)
 
 The script is idempotent — it skips files/directories that already exist.
@@ -50,7 +48,7 @@ Display what was created:
 Board system initialized:
   board/tasks/          — actionable work items
   board/planning/       — epics, ADRs, notes
-  board/reference/      — evergreen knowledge (spec files added)
+  board/reference/      — evergreen knowledge
   board/resources/      — external material inbox
   board/archive/        — completed items
   board/.doc-ids        — ID tracking file

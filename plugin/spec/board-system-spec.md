@@ -1,7 +1,3 @@
----
-type: reference
-created: 2026-02-12
----
 # Board System Specification
 
 > **Status:** Active
@@ -540,12 +536,8 @@ To use this system in a new project:
    mkdir -p board/{tasks,planning,reference,resources,archive}
    ```
 
-2. Copy the framework docs into `board/reference/`:
-   - `REFE-0001_board-system-spec.md` (this file)
-   - `REFE-0002_board-system-quickref.md`
-
-3. Reference the quickref from your project's `CLAUDE.md`:
+2. Reference the board system from your project's `CLAUDE.md`:
    ```markdown
    ## Project Board
-   @board/reference/REFE-0002_board-system-quickref.md
+   This project uses a structured board system for project management.
    ```

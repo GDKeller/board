@@ -1,10 +1,6 @@
----
-type: reference
-created: 2026-02-12
----
 # Board System Quick Reference
 
-> Full specification: `REFE-0001_board-system-spec.md`
+> Full specification: `board-system-spec.md`
 
 ## File Naming
 
