@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Board Lint
 
-Validate board files for structural and data issues, and help fix any problems found. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Validate board files for structural and data issues, and help fix any problems found. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Steps
 

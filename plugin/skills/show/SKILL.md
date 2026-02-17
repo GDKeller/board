@@ -7,7 +7,7 @@ allowed-tools: Bash, Read, Grep, Glob
 
 # Board Overview
 
-Display a summary of the active project board. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Display a summary of the active project board. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Board Data
 

@@ -7,7 +7,7 @@ allowed-tools: Bash, Read, Grep, Glob
 
 # Board Check
 
-Read-only lookup of the `board/` project board to find items relevant to the current context. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Read-only lookup of the `board/` project board to find items relevant to the current context. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 This skill is for **consulting** the board, not modifying it. Use `/board:update` to make changes.
 

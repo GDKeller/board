@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # Edit Board Item
 
-Modify an existing item in the `board/` project management system. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Modify an existing item in the `board/` project management system. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Arguments
 

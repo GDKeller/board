@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Board Archive
 
-Move completed items from active directories to `board/archive/`. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Move completed items from active directories to `board/archive/`. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Board Data
 

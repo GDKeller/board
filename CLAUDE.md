@@ -31,9 +31,10 @@ plugin/                       # Claude Code plugin (primary distribution)
 │   └── archive-batch.sh     # Batch git mv to archive
 ├── hooks/
 │   └── hooks.json           # SessionStart hook → auto-lint
+├── spec/                    # System spec (plugin-internal, not board items)
+│   ├── board-system-spec.md
+│   └── board-system-quickref.md
 └── templates/               # Board template files for init
-    ├── REFE-0001_board-system-spec.md
-    ├── REFE-0002_board-system-quickref.md
     └── claude-md-snippet.md
 
 board/                       # Example board (also used for self-management)
@@ -49,7 +50,7 @@ docs/                        # Documentation
 
 ## Key Specifications
 
-The authoritative system spec lives at `board/reference/REFE-0001_board-system-spec.md`. The quick reference is at `board/reference/REFE-0002_board-system-quickref.md`. Always consult these when making changes to the framework.
+The authoritative system spec lives at `plugin/spec/board-system-spec.md`. The quick reference is at `plugin/spec/board-system-quickref.md`. Always consult these when making changes to the framework.
 
 ### File Naming Convention
 
@@ -88,7 +89,7 @@ Scan both `board/` and `board/archive/` for the highest existing ID of each type
 
 This repo has no build system, tests, or linter — it's pure Markdown/YAML files. Changes involve editing document content, skill definitions, scripts, or the system specification itself.
 
-When modifying the board system spec (`REFE-0001`) or quick reference (`REFE-0002`), ensure they stay in sync. The quick reference is a condensed version of the spec — not a separate document with independent rules.
+When modifying the board system spec (`plugin/spec/board-system-spec.md`) or quick reference (`plugin/spec/board-system-quickref.md`), ensure they stay in sync. The quick reference is a condensed version of the spec — not a separate document with independent rules.
 
 ### Scripts
 
@@ -117,4 +118,4 @@ bash plugin/scripts/archive-batch.sh ./board board/tasks/TASK-0001_example.md
 
 - **Plugin cache copy**: Claude Code copies plugins to a cache directory. Paths that traverse outside the plugin root (`../`) will not resolve after installation. Always use `${CLAUDE_PLUGIN_ROOT}` for script references.
 - **Bash 3.2 constraint**: macOS ships bash 3.2 by default. No associative arrays (`declare -A`), no `readarray`/`mapfile`, no `${var,,}` lowercase syntax.
-- **Spec sync obligation**: `REFE-0001` (full spec) and `REFE-0002` (quick ref) must stay in sync. The quick ref is a condensed derivative, not an independent document.
+- **Spec sync obligation**: `plugin/spec/board-system-spec.md` (full spec) and `plugin/spec/board-system-quickref.md` (quick ref) must stay in sync. The quick ref is a condensed derivative, not an independent document.

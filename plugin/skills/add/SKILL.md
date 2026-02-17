@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # Add Board Item
 
-Create a new item in the `board/` project management system. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Create a new item in the `board/` project management system. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Existing Board Items
 

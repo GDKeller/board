@@ -6,7 +6,7 @@ allowed-tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 
 # Board Update
 
-Analyze the codebase and git history to automatically reconcile the project board with reality. The system spec is at `board/reference/REFE-0001_board-system-spec.md`.
+Analyze the codebase and git history to automatically reconcile the project board with reality. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
 ## Board Data
 

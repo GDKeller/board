@@ -1,6 +1,6 @@
 # Board System — Implementation Guide
 
-This covers tooling-specific setup for the board system. For the framework itself, see `board/reference/REFE-0001_board-system-spec.md`.
+This covers tooling-specific setup for the board system. For the framework itself, see `plugin/spec/board-system-spec.md`.
 
 ---
 
@@ -12,15 +12,7 @@ This covers tooling-specific setup for the board system. For the framework itsel
 mkdir -p board/{tasks,planning,reference,resources,archive}
 ```
 
-### 2. Copy Framework Docs
-
-Copy from the canonical source into `board/reference/`:
-- `REFE-0001_board-system-spec.md`
-- `REFE-0002_board-system-quickref.md`
-
-In a fresh project, these are the first two REFE files. Projects add their own starting at REFE-0003.
-
-### 3. Add to CLAUDE.md
+### 2. Add to CLAUDE.md
 
 Add the following to your project's `CLAUDE.md`:
 
@@ -28,13 +20,11 @@ Add the following to your project's `CLAUDE.md`:
 ## Project Board
 
 This project uses a structured board system for project management. **Ask before creating new board files.**
-
-@board/reference/REFE-0002_board-system-quickref.md
 ```
 
-The `@` import pulls the quickref into Claude Code's context at session start.
+Projects start REFE numbering at 0001.
 
-### 4. (Optional) Install Claude Skills
+### 3. (Optional) Install Claude Skills
 
 Copy the `board-*` skills into your Claude Code skills directory to enable slash commands:
 - `/board:add` — Create new board items
