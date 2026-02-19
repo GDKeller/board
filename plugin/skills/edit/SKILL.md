@@ -1,8 +1,8 @@
 ---
 name: edit
-description: "Modifies existing board items — changes status, priority, blockers, titles, and body content with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, or change a board item, or via '/board:edit'."
+description: "Modifies existing board items — changes status, priority, blockers, titles, body content, and type (convert/retype) with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, change, convert, or retype a board item, or via '/board:edit'."
 argument-hint: "[item-id] [field] [value]"
-allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -88,6 +88,49 @@ Only `1` (high), `2` (medium), or `3` (low) are valid. Reject other values.
 | `body` | all except adr | Freeform content below frontmatter |
 | `superseded_by` | adr | Only when setting status to superseded |
 | `url` | resource | Primary external URL |
+| `type` | all except adr | Retype/convert — creates new file, deletes old (see below) |
+
+## Retype (Convert Type)
+
+When the user asks to convert or retype an item (e.g., "convert TASK-0022 to a note", "retype this as an epic"):
+
+### Validation
+
+1. **Refuse if source is ADR** — ADRs are immutable. Explain why and suggest creating a new item separately.
+2. **Confirm with user** — "This will delete TASK-0022 and create a new NOTE with the next available ID. Proceed?"
+
+### Procedure
+
+1. **Get next ID** for the target type:
+   ```bash
+   bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TARGET_TYPE>
+   ```
+2. **Create new file** with:
+   - Correct type prefix and ID in filename
+   - Correct directory for the target type
+   - Correct frontmatter (initial status for new type, carry over applicable fields)
+   - Body content carried over from old item
+   - Title adjusted if needed (e.g., imperative mood for TASKs, relaxed for NOTEs)
+3. **Delete old file** via `git rm`
+4. **Find and update cross-references** — use Grep to search for the old ID across all board files:
+   - `blocked_by` lists
+   - `parent` fields
+   - `tasks` lists (in EPICs)
+   - `spawned` lists (in NOTEs)
+   - Wiki-links (`[[OLD-ID]]`) in body content
+
+   Update each reference to the new ID.
+5. **Report** the change: `Retyped: TASK-0022 → NOTE-0005 (old file deleted, references updated)`
+
+### Type-Specific Adjustments
+
+| Target Type | Adjustments |
+|-------------|-------------|
+| task | Title must be imperative mood; `status: backlog`; add `priority: 2` |
+| epic | Title stays imperative; `status: planning`; consider adding `tasks:` list |
+| note | `status: inbox`; title can relax imperative mood |
+| reference | No status field; content must be objective/encyclopedic |
+| resource | Requires `url` (ask user); `status: inbox` |
 
 ## Execution
 

@@ -133,6 +133,10 @@ Start with a verb. Describe the action to be done.
 
 If it can't be done in one focused effort, split it into tasks under an epic.
 
+**Quick test:** "Could someone meaningfully complete and ship part of this while the rest remains undone?" If yes → EPIC.
+
+**EPIC signals:** multiple distinct verbs/actions, work spans multiple code areas, sub-steps shippable independently, would produce multiple PRs, description joins separate deliverables with "and".
+
 ### NOTE Lifecycle
 
 NOTEs are the "to be refined" inbox. When processed, they **spawn** new artifacts:
@@ -197,3 +201,18 @@ blocked_by: ["[[TASK-0001]]", "[[TASK-0003]]"]
 - Notes with `status: processed` → move to `board/archive/`
 - **ADRs are never archived** — stay in `board/planning/`
 - Files keep their original filename and ID
+
+## Error Correction & Type Conversion
+
+When an item was created as the wrong type, fix it with delete + create. Git preserves history.
+
+**Process:**
+1. Create new item with correct type + next available ID for that type (via `next-id.sh`)
+2. Carry over relevant content (adjust title/frontmatter for new type)
+3. Delete old file via `git rm`
+4. Update cross-references (`blocked_by`, `parent`, `tasks`, `spawned`, wiki-links) to new ID
+
+**Key rules:**
+- **IDs don't carry over** — TASK-0022 retyped to NOTE becomes NOTE-0005 (next available), not NOTE-0022
+- **ADRs are immutable** — never convert FROM an ADR; create new item separately
+- **Not the same as spawning** — error correction fixes a recent mistake; spawning extracts value from a correctly-typed item over time

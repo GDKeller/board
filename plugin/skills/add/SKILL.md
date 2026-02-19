@@ -18,6 +18,25 @@ Pre-loaded board data for duplicate detection:
 
 Before creating, check if a similar item already exists. If a close match is found, ask the user if they still want to create a new one.
 
+## Scope Assessment
+
+When the user requests a **TASK**, evaluate whether it is actually EPIC-sized before creating it. Look for these signals:
+
+- Multiple distinct steps or deliverables in the description
+- Multiple action verbs joined by "and" (e.g., "add auth and set up roles and integrate SSO")
+- Work that spans different code areas or concerns
+- Sub-steps that could be completed and shipped independently
+
+**Quick test:** "Could someone meaningfully complete and ship part of this while the rest remains undone?" If yes → likely an EPIC.
+
+If EPIC signals are present, suggest an EPIC + sub-TASKs with a concrete breakdown. For example:
+
+> "This looks like it has multiple independent deliverables. Want me to create an EPIC with separate TASKs for each piece instead?"
+
+**This is a soft suggestion only.** If the user says "just make it a task," comply without pushback.
+
+This assessment only applies to TASK creation — do not second-guess EPICs, NOTEs, or other types.
+
 ## Arguments
 
 The user provides the type and title: `/board:add task <title>`, `/board:add epic <title>`, etc.

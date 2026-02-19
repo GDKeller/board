@@ -90,6 +90,8 @@ Resist the pull toward JIRA/PM complexity hell.
 
 A TASK is a single, completable unit of work. If it can't be done in one focused effort, split it into multiple TASKs under an EPIC.
 
+**Scope check:** If a request involves multiple independently-completable steps, distinct deliverables, or work spanning different code areas, it is likely an EPIC with child TASKs. Quick test: "Could someone meaningfully complete and ship part of this while the rest remains undone?" If yes → EPIC.
+
 **Required metadata:**
 - `type: task`
 - `status`: `backlog` | `current` | `done`
@@ -145,6 +147,13 @@ Epics are containers for related tasks. They track overall progress of a larger 
 - `tags`: list of cross-cutting tags
 
 **Rule of thumb:** If it can't be completed in a single focused effort, it's probably an epic that should be split into tasks.
+
+**Signals that something is EPIC-sized:**
+- Multiple distinct verbs/actions in the description (e.g., "add auth, set up roles, and integrate SSO")
+- Work spans multiple code areas or concerns
+- Sub-steps could be completed and shipped independently
+- Would naturally produce multiple PRs or commits
+- Description uses "and" to join logically separate deliverables
 
 ### ADR (Architecture Decision Record)
 
@@ -509,6 +518,60 @@ When a task is `done`, resource is `processed`, or note is `processed`:
 Archived items remain searchable and linkable.
 
 **ADRs are NOT archived** — they stay in `board/planning/` regardless of status since they are immutable historical records that should remain easily discoverable.
+
+---
+
+## Error Correction & Type Conversion
+
+Items sometimes get created as the wrong type — a TASK turns out to be EPIC-sized, a NOTE should have been a TASK, etc. This is normal. The fix is simple: delete the mis-typed item and create a correct one. Git history preserves the paper trail.
+
+### Why Delete + Create (Not In-Place Conversion)
+
+- **IDs are type-scoped** — TASK-0022 becoming NOTE-0022 skips the NOTE ID sequence and creates gaps
+- **Directories change** — different types live in different directories
+- **Frontmatter changes** — different types have different required fields and initial statuses
+- **Simplicity** — no conversion machinery to build or maintain; delete + create uses existing workflows
+
+### Process
+
+1. **Create** the new item with the correct type, using the next available ID for that type (via `next-id.sh`)
+2. **Carry over** relevant content from the old item (title, body, any applicable metadata)
+3. **Delete** the old file via `git rm`
+4. **Update cross-references** — find any `blocked_by`, `parent`, `tasks`, `spawned`, or wiki-links (`[[OLD-ID]]`) that point to the old ID and update them to the new ID
+
+### ID Assignment Rule
+
+The new item always gets the next available ID for the *target* type. IDs do not carry over across types.
+
+Example: TASK-0022 is retyped to a NOTE. The next NOTE ID is NOTE-0005. The new file is `NOTE-0005_...md`, not `NOTE-0022_...md`.
+
+### Conversion Considerations
+
+| From → To | Watch For |
+|-----------|-----------|
+| TASK → EPIC | Title stays imperative; add `tasks:` list for child TASKs |
+| TASK → NOTE | Title can relax imperative mood; set `status: inbox` |
+| EPIC → TASK | Ensure scope is genuinely single-unit; orphan child TASKs need re-parenting or removal |
+| NOTE → TASK | Title must become imperative mood; set `status: backlog` |
+| Any → REFE | Strip status field; content must be objective/encyclopedic |
+| Any → RESO | Requires a `url` field; set `status: inbox` |
+
+### ADR Exception
+
+ADRs are immutable historical records. **Never convert FROM an ADR** — if an ADR was created in error, leave it with a dated addendum explaining the mistake, or supersede it. To capture ADR content as a different type, create the new item separately.
+
+Converting *to* an ADR is also unusual — ADRs are written after decisions, not converted from other types. If a NOTE or TASK contains a decision that should be recorded, create a new ADR and reference the original item.
+
+### Error Correction vs NOTE Spawning
+
+These are different operations:
+
+| Scenario | Operation | What happens |
+|----------|-----------|--------------|
+| Created a NOTE 5 minutes ago, should have been a TASK | **Error correction** | Delete NOTE, create TASK with same content |
+| NOTE existed for days, now extracting actionable work from it | **Spawning** | NOTE stays, new TASK(s) created, NOTE gets `spawned:` links and is archived |
+
+The distinction is intent: error correction fixes a mistake; spawning extracts value from a correctly-typed item.
 
 ---
 
