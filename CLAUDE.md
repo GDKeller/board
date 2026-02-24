@@ -87,7 +87,7 @@ Scan both `board/` and `board/archive/` for the highest existing ID of each type
 
 ## Working on This Repository
 
-This repo has no build system, tests, or linter — it's pure Markdown/YAML files. Changes involve editing document content, skill definitions, scripts, or the system specification itself.
+This repo has no build system, tests, or code linter — it's pure Markdown/YAML files. However, `board-lint.sh` provides domain-specific validation for board files. Changes involve editing document content, skill definitions, scripts, or the system specification itself.
 
 When modifying the board system spec (`plugin/spec/board-system-spec.md`) or quick reference (`plugin/spec/board-system-quickref.md`), ensure they stay in sync. The quick reference is a condensed version of the spec — not a separate document with independent rules.
 
@@ -98,6 +98,7 @@ All scripts in `plugin/scripts/` are bash 3.2+ compatible (macOS default). They 
 Example invocations from the repo root:
 
 ```bash
+bash plugin/scripts/board-init.sh ./board                    # Scaffold board directories + templates
 bash plugin/scripts/board-scan.sh ./board --active          # TSV of active items
 bash plugin/scripts/board-scan.sh ./board --archive-summary  # Archive counts
 bash plugin/scripts/board-lint.sh ./board                    # Validate all files
