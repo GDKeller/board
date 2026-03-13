@@ -1,6 +1,6 @@
 ---
-name: lint
-description: "Validates board files for structural integrity — checks frontmatter, status values, directory placement, duplicate IDs, and broken references, then offers interactive fixes. Activates when the user asks to lint or validate the board, or when board-lint.sh reports errors on session startup, or via '/board:lint'."
+name: board-lint
+description: "Validates board files for structural integrity — checks frontmatter, status values, directory placement, duplicate IDs, and broken references, then offers interactive fixes. Activates when the user asks to lint or validate the board, or when board-lint.sh reports errors on session startup, or via '/board:board-lint'."
 allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion
 disable-model-invocation: true
 ---
@@ -44,7 +44,7 @@ Group issues by file and present them clearly:
 
 For each error, offer to fix it:
 
-- **Invalid status**: Ask the user what the correct status should be, then use `/board:edit` to update
+- **Invalid status**: Ask the user what the correct status should be, then use `/board:board-edit` to update
 - **Wrong directory**: Offer to move the file to the correct directory via `git mv`
 - **Missing fields**: Ask the user for the value, then add it to frontmatter
 - **Duplicate IDs**: Offer to reassign one of the duplicates using `next-id.sh`

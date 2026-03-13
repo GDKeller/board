@@ -25,7 +25,7 @@ done
 # Guard: if no board directory exists, output header only
 if [[ ! -d "$BOARD_ROOT" ]]; then
     printf 'filepath\ttype\tstatus\tpriority\tblocked_by\tparent\ttitle\n'
-    printf '# No board directory found at %s. Run /board:init to set up.\n' "$BOARD_ROOT"
+    printf '# No board directory found at %s. Run /board:board-init to set up.\n' "$BOARD_ROOT"
     exit 0
 fi
 
@@ -169,3 +169,5 @@ if [[ $ARCHIVE_SUMMARY -eq 1 && -d "$BOARD_ROOT/archive" ]]; then
         [[ $count -gt 0 ]] && printf '%s\t%s\n' "$prefix" "$count"
     done
 fi
+
+exit 0

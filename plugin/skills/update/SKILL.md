@@ -1,6 +1,6 @@
 ---
-name: update
-description: "Reconciles the project board with the codebase by analyzing git history and code state to detect completed tasks, unblocked items, stale work, and new tasks needed. Activates when the user asks to update or sync the board, or via '/board:update'. Also activates autonomously after completing significant coding work that may have resolved tracked tasks."
+name: board-update
+description: "Reconciles the project board with the codebase by analyzing git history and code state to detect completed tasks, unblocked items, stale work, and new tasks needed. Activates when the user asks to update or sync the board, or via '/board:board-update'. Also activates autonomously after completing significant coding work that may have resolved tracked tasks."
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 ---
 
@@ -93,6 +93,6 @@ Present ALL proposed changes as a single summary before making any edits:
 
 Ask the user to approve, reject, or cherry-pick which changes to apply. Then execute only the approved changes:
 
-- **Status updates**: Use `/board:edit` to update status fields
-- **New tasks**: Invoke `/board:add` for each approved new task
+- **Status updates**: Use `/board:board-edit` to update status fields
+- **New tasks**: Invoke `/board:board-add` for each approved new task
 - **Archiving**: Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh board <file1> <file2> ...` directly for approved items

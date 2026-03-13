@@ -57,18 +57,18 @@ The system is well-designed. Core decisions are sound: scripts for determinism, 
 - Implementation guide `.doc-ids` example incomplete (4 of 6 types, wrong format)
 - `board-lint.sh` treats `created` as WARN but spec says required (ERROR)
 - Quick reference omits EPIC archiving rule
-- Implementation guide omits `/board:edit` and `/board:lint` from skills list
-- ADR body template absent from `/board:add`
-- Non-git fallback missing for `git mv` in `/board:edit`
-- `/board:update` sub-skill delegation ambiguous
-- `/board:init` available commands list missing `/board:lint`
+- Implementation guide omits `/board:board-edit` and `/board:board-lint` from skills list
+- ADR body template absent from `/board:board-add`
+- Non-git fallback missing for `git mv` in `/board:board-edit`
+- `/board:board-update` sub-skill delegation ambiguous
+- `/board:board-init` available commands list missing `/board:board-lint`
 - `board-lint.sh` doesn't validate `parent` or `spawned` cross-references
 
 ## Strengths Worth Preserving
 
 - Script/LLM boundary correctly drawn everywhere
 - ADR immutability enforced at 4 layers (spec, lint, archive, edit)
-- Progressive escalation in `/board:check` — best-designed skill
+- Progressive escalation in `/board:board-check` — best-designed skill
 - `validate-status.sh` exit code convention (0/1/2) is clean API design
 - `board-init.sh` idempotency — safe to re-run
 - Context budget management via `--active`, `--archive-summary`, 50-line parse limit

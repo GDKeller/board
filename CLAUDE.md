@@ -13,15 +13,15 @@ plugin/                       # Claude Code plugin (primary distribution)
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest
 ├── commands/
-│   └── init.md              # /board:init — scaffold board into a project
+│   └── init.md              # /board:board-init — scaffold board into a project
 ├── skills/                  # 7 plugin skills (use scripts for efficiency)
-│   ├── add/                 # /board:add — create new board items
-│   ├── show/                # /board:show — display board overview
-│   ├── check/               # /board:check — search for relevant context
-│   ├── edit/                # /board:edit — modify existing board items
-│   ├── update/              # /board:update — reconcile board with codebase
-│   ├── archive/             # /board:archive — archive completed items
-│   └── lint/                # /board:lint — validate board file health
+│   ├── add/                 # /board:board-add — create new board items
+│   ├── show/                # /board:board-show — display board overview
+│   ├── check/               # /board:board-check — search for relevant context
+│   ├── edit/                # /board:board-edit — modify existing board items
+│   ├── update/              # /board:board-update — reconcile board with codebase
+│   ├── archive/             # /board:board-archive — archive completed items
+│   └── lint/                # /board:board-lint — validate board file health
 ├── scripts/                 # Bash helpers (save context vs Glob/Grep)
 │   ├── board-scan.sh        # Parse all board files to TSV
 │   ├── board-init.sh        # Scaffold board directories + templates

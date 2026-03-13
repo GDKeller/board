@@ -1,6 +1,6 @@
 ---
-name: show
-description: "Displays a formatted project board overview grouped by status, with priority sorting, epic progress, blocking relationships, and archive statistics. Activates when the user asks to see the board, show tasks, view backlog, or check project status, or via '/board:show'."
+name: board-show
+description: "Displays a formatted project board overview grouped by status, with priority sorting, epic progress, blocking relationships, and archive statistics. Activates when the user asks to see the board, show tasks, view backlog, or check project status, or via '/board:board-show'."
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob
 ---

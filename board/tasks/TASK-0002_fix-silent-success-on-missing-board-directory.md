@@ -20,7 +20,7 @@ Change the missing-directory handler to exit non-zero with a stderr message:
 
 ```bash
 if [[ ! -d "$BOARD_ROOT" ]]; then
-    echo "Error: No board directory found at $BOARD_ROOT. Run /board:init to set up." >&2
+    echo "Error: No board directory found at $BOARD_ROOT. Run /board:board-init to set up." >&2
     exit 1
 fi
 ```

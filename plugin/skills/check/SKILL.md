@@ -1,6 +1,6 @@
 ---
-name: check
-description: "Performs read-only board lookups to find tasks, ADRs, references, and resources relevant to the current work area. Activates when the user asks to check the board, find related tasks, or verify if something is tracked, or via '/board:check'. Also activates autonomously when investigating a feature area that might overlap with existing tracked work."
+name: board-check
+description: "Performs read-only board lookups to find tasks, ADRs, references, and resources relevant to the current work area. Activates when the user asks to check the board, find related tasks, or verify if something is tracked, or via '/board:board-check'. Also activates autonomously when investigating a feature area that might overlap with existing tracked work."
 argument-hint: "[keyword or area]"
 allowed-tools: Bash, Read, Grep, Glob
 ---
@@ -9,7 +9,7 @@ allowed-tools: Bash, Read, Grep, Glob
 
 Read-only lookup of the `board/` project board to find items relevant to the current context. The system spec is bundled with the plugin at `${CLAUDE_PLUGIN_ROOT}/spec/board-system-spec.md`.
 
-This skill is for **consulting** the board, not modifying it. Use `/board:update` to make changes.
+This skill is for **consulting** the board, not modifying it. Use `/board:board-update` to make changes.
 
 ## When to Use
 

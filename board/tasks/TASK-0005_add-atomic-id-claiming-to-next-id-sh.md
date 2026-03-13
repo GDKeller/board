@@ -10,7 +10,7 @@ created: 2026-02-24
 
 ## Description
 
-`next-id.sh` reads the highest existing ID and increments it, but never writes back to `.doc-ids`. Two rapid `/board:add` calls (before the first file is created on disk) will return the same ID, causing a silent duplicate.
+`next-id.sh` reads the highest existing ID and increments it, but never writes back to `.doc-ids`. Two rapid `/board:board-add` calls (before the first file is created on disk) will return the same ID, causing a silent duplicate.
 
 ## Changes Required
 

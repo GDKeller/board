@@ -1,6 +1,6 @@
 ---
-name: edit
-description: "Modifies existing board items — changes status, priority, blockers, titles, body content, and type (convert/retype) with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, change, convert, or retype a board item, or via '/board:edit'."
+name: board-edit
+description: "Modifies existing board items — changes status, priority, blockers, titles, body content, and type (convert/retype) with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, change, convert, or retype a board item, or via '/board:board-edit'."
 argument-hint: "[item-id] [field] [value]"
 allowed-tools: Bash, Read, Edit, Write, Glob, Grep, AskUserQuestion
 disable-model-invocation: true
@@ -12,7 +12,7 @@ Modify an existing item in the `board/` project management system. The system sp
 
 ## Arguments
 
-The user provides the item ID and what to change: `/board:edit TASK-0003 status current`, `/board:edit TASK-0005 priority 1`, etc.
+The user provides the item ID and what to change: `/board:board-edit TASK-0003 status current`, `/board:board-edit TASK-0005 priority 1`, etc.
 
 If the item ID is ambiguous or missing, search by keyword using Glob on filenames and ask the user to confirm which item.
 
@@ -56,7 +56,7 @@ Backward transitions (e.g., `done` → `backlog`) are allowed but should confirm
 
 ADRs are **immutable**. The only permitted edit is changing `status` (to `superseded` or `deprecated`). If the user asks to edit ADR content, explain that ADRs are write-once and suggest:
 - Adding a dated addendum at the bottom of the file
-- Creating a new ADR that supersedes the old one (via `/board:add adr`)
+- Creating a new ADR that supersedes the old one (via `/board:board-add adr`)
 
 If setting an ADR to `superseded`, ask for the superseding ADR ID and add `superseded_by` to the frontmatter.
 

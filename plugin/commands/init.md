@@ -1,5 +1,5 @@
 ---
-name: init
+name: board-init
 description: "Initialize the board system in the current project"
 allowed-tools: Bash, Read, Write, Edit, AskUserQuestion
 ---
@@ -54,10 +54,10 @@ Board system initialized:
   board/.doc-ids        — ID tracking file
 
 Available commands:
-  /board:show           — view board overview
-  /board:add            — create new items
-  /board:edit           — modify existing items
-  /board:check          — find related board context
-  /board:update         — reconcile board with codebase
-  /board:archive        — archive completed items
+  /board:board-show           — view board overview
+  /board:board-add            — create new items
+  /board:board-edit           — modify existing items
+  /board:board-check          — find related board context
+  /board:board-update         — reconcile board with codebase
+  /board:board-archive        — archive completed items
 ```

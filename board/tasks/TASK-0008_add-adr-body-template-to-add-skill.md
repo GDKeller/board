@@ -6,11 +6,11 @@ parent: EPIC-0001
 created: 2026-02-24
 ---
 
-# TASK-0008: Add ADR body template to /board:add skill
+# TASK-0008: Add ADR body template to /board:board-add skill
 
 ## Description
 
-The `/board:add` skill provides detailed frontmatter templates for all six types but gives zero guidance about body content structure. The ADR type requires a specific 5-section structure (Context, Considered Approaches, Decision, Consequences, Spawned Items) per the spec. The LLM is left to guess, and the "Spawned Items" section (a lint-checked requirement) is easy to miss.
+The `/board:board-add` skill provides detailed frontmatter templates for all six types but gives zero guidance about body content structure. The ADR type requires a specific 5-section structure (Context, Considered Approaches, Decision, Consequences, Spawned Items) per the spec. The LLM is left to guess, and the "Spawned Items" section (a lint-checked requirement) is easy to miss.
 
 ## Changes Required
 

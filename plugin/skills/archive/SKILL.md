@@ -1,6 +1,6 @@
 ---
-name: archive
-description: "Moves completed board items (done tasks, done epics, processed notes/resources) to board/archive/ while preserving IDs and git history. Never archives ADRs. Activates when the user asks to archive, clean up, or tidy the board, or via '/board:archive'."
+name: board-archive
+description: "Moves completed board items (done tasks, done epics, processed notes/resources) to board/archive/ while preserving IDs and git history. Never archives ADRs. Activates when the user asks to archive, clean up, or tidy the board, or via '/board:board-archive'."
 allowed-tools: Bash, Read, Glob, AskUserQuestion
 disable-model-invocation: true
 ---

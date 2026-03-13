@@ -27,11 +27,11 @@ Projects start REFE numbering at 0001.
 ### 3. (Optional) Install Claude Skills
 
 Copy the `board-*` skills into your Claude Code skills directory to enable slash commands:
-- `/board:add` — Create new board items
-- `/board:show` — View board overview
-- `/board:check` — Look up relevant board context
-- `/board:update` — Reconcile board with codebase
-- `/board:archive` — Archive completed items
+- `/board:board-add` — Create new board items
+- `/board:board-show` — View board overview
+- `/board:board-check` — Look up relevant board context
+- `/board:board-update` — Reconcile board with codebase
+- `/board:board-archive` — Archive completed items
 
 ---
 

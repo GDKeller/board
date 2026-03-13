@@ -1,6 +1,6 @@
 ---
-name: add
-description: "Creates new board items (tasks, epics, ADRs, notes, references, resources) with correct frontmatter, ID assignment, and duplicate detection. Activates when the user asks to add, create, or track a new board item, or via '/board:add'."
+name: board-add
+description: "Creates new board items (tasks, epics, ADRs, notes, references, resources) with correct frontmatter, ID assignment, and duplicate detection. Activates when the user asks to add, create, or track a new board item, or via '/board:board-add'."
 argument-hint: "[type] [title]"
 allowed-tools: Bash, Read, Write, Glob, AskUserQuestion
 disable-model-invocation: true
@@ -39,7 +39,7 @@ This assessment only applies to TASK creation — do not second-guess EPICs, NOT
 
 ## Arguments
 
-The user provides the type and title: `/board:add task <title>`, `/board:add epic <title>`, etc.
+The user provides the type and title: `/board:board-add task <title>`, `/board:board-add epic <title>`, etc.
 
 If no type is given, ask the user what type of item to create.
 

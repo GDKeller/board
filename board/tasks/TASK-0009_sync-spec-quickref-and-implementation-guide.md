@@ -25,7 +25,7 @@ The spec consistency review found multiple discrepancies between the full spec, 
 4. **Add EPIC to archiving section** (line ~510) — "When a task is `done`, epic is `done`, resource is `processed`, or note is `processed`"
 5. **Add explicit REFE archiving policy** — "Reference docs are not archived; they are evergreen and should be kept current or deleted if obsolete"
 6. **Reword Guiding Principle #6** — "Minimal status values per type (2-3 each)" instead of selectively citing TASKs and ADRs
-7. **Remove or update minimal Setup section** (lines 593-607) — point to implementation guide or `/board:init`
+7. **Remove or update minimal Setup section** (lines 593-607) — point to implementation guide or `/board:board-init`
 
 ### CLAUDE.md
 
