@@ -48,7 +48,7 @@ If no type is given, ask the user what type of item to create.
 Run the ID assignment script:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE>
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE> ./board
 ```
 
 This scans all directories (including `board/archive/` and `.doc-ids`) and returns the next available 4-digit zero-padded ID.

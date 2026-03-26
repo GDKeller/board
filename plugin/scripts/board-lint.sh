@@ -17,8 +17,9 @@ set -euo pipefail
 
 BOARD_ROOT="${1:-./board}"
 
-# If no board directory exists, exit silently (not every project uses board)
+# If no board directory exists, report and exit clean (not every project uses board)
 if [[ ! -d "$BOARD_ROOT" ]]; then
+    echo "Board lint: no board/ directory found at $BOARD_ROOT — skipping."
     exit 0
 fi
 

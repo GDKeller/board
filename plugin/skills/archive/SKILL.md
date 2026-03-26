@@ -26,7 +26,7 @@ Pre-loaded board data:
 3. Move confirmed files using the archive script:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh board <file1> <file2> ...
+bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file1> <file2> ...
 ```
 
 This handles `git mv` (or plain `mv` outside git repos), skips ADRs automatically, and reports results.

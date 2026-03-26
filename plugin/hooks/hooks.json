@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh ./board",
             "timeout": 10
           }
         ]

@@ -22,11 +22,10 @@ for arg in "$@"; do
     esac
 done
 
-# Guard: if no board directory exists, output header only
+# Guard: if no board directory exists, fail loudly
 if [[ ! -d "$BOARD_ROOT" ]]; then
-    printf 'filepath\ttype\tstatus\tpriority\tblocked_by\tparent\ttitle\n'
-    printf '# No board directory found at %s. Run /board:board-init to set up.\n' "$BOARD_ROOT"
-    exit 0
+    echo "Error: No board directory found at $BOARD_ROOT. Run /board:board-init to set up." >&2
+    exit 1
 fi
 
 parse_file() {

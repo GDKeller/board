@@ -95,4 +95,4 @@ Ask the user to approve, reject, or cherry-pick which changes to apply. Then exe
 
 - **Status updates**: Use `/board:board-edit` to update status fields
 - **New tasks**: Invoke `/board:board-add` for each approved new task
-- **Archiving**: Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh board <file1> <file2> ...` directly for approved items
+- **Archiving**: Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file1> <file2> ...` directly for approved items

@@ -103,7 +103,7 @@ When the user asks to convert or retype an item (e.g., "convert TASK-0022 to a n
 
 1. **Get next ID** for the target type:
    ```bash
-   bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TARGET_TYPE>
+   bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TARGET_TYPE> ./board
    ```
 2. **Create new file** with:
    - Correct type prefix and ID in filename

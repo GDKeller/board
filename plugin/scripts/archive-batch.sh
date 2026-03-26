@@ -65,15 +65,15 @@ for file in "$@"; do
     fi
 
     if $use_git; then
-        if ! git mv "$file" "$dest" 2>/dev/null; then
-            skipped+=("$file (git mv failed — check for uncommitted changes)")
+        err_output=$(git mv "$file" "$dest" 2>&1) || {
+            skipped+=("$file (git mv failed: $err_output)")
             continue
-        fi
+        }
     else
-        if ! mv "$file" "$dest" 2>/dev/null; then
-            skipped+=("$file (mv failed)")
+        err_output=$(mv "$file" "$dest" 2>&1) || {
+            skipped+=("$file (mv failed: $err_output)")
             continue
-        fi
+        }
     fi
     moved+=("$basename")
 done

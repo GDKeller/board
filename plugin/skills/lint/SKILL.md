@@ -15,7 +15,7 @@ Validate board files for structural and data issues, and help fix any problems f
 
 The following lint output is pre-loaded (checks: frontmatter validity, required fields, status/priority values, directory placement, filename patterns, duplicate IDs, ADRs in archive, broken references):
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh`
+!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh ./board`
 
 ### 2. Interpret Results
 
