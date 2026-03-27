@@ -194,7 +194,7 @@ epic_progress() {
         for f in "$BOARD_ROOT/archive"/TASK-*.md; do
             [[ -f "$f" ]] || continue
             local file_parent=""
-            file_parent="$(sed -n '/^---$/,/^---$/ { /^parent:/ { s/^parent:[[:space:]]*//; s/[[:space:]]*$//; s/"//g; p; } }' "$f")"
+            file_parent="$(awk '/^---$/{fm++; next} fm==1 && /^parent:/{sub(/^parent:[[:space:]]*/,""); gsub(/[[:space:]]*$/,""); gsub(/"/,""); print; exit}' "$f")"
             if [[ "$file_parent" == "$epic_id" ]]; then
                 total=$((total + 1))
                 done=$((done + 1))
