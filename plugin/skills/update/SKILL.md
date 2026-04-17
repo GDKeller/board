@@ -27,6 +27,7 @@ Parse the pre-loaded board data above. Identify:
 - Epics and their child tasks (via `parent` field)
 - Blocked items and their blockers
 - Items with terminal status (`done`, `processed`) that should be archived
+- Items missing a required `status` field (all types except `reference`)
 
 ### 2. Gather Codebase Context
 
@@ -71,16 +72,16 @@ Present ALL proposed changes as a single summary before making any edits:
 ```
 ## Board Update Proposal
 
-### Status Changes
-- TASK-0003: backlog -> done (cache-decoded-image: implemented in commit a1b2c3d)
-- EPIC-0001: planning -> current (has active child tasks)
+### Status Changes → Archive
+- TASK-0003: backlog → done → **archive** (cache-decoded-image: implemented in commit a1b2c3d)
+- EPIC-0001: planning → current (has active child tasks)
+- NOTE-0002: already processed → **archive**
 
 ### New Tasks Suggested
 - "Fix FIXME in preprocessing.rs line 42" (found in recent commit)
 
-### Ready to Archive
-- TASK-0003: done
-- NOTE-0002: processed
+### Missing Status
+- TASK-0025: no status field (required for tasks)
 
 ### Stale Items
 - TASK-0007: marked current but no activity in 45 days
@@ -89,10 +90,15 @@ Present ALL proposed changes as a single summary before making any edits:
 - TASK-0005: blocker TASK-0003 is now done
 ```
 
+**Terminal-status items must be archived atomically.** When a status change results in a terminal status (`done` for tasks/epics, `processed` for resources/notes), the archiving step is bundled into the same proposal line — not presented as a separate action. Items already at a terminal status but not yet archived should also appear with an **archive** tag.
+
+ADRs are the sole exception — they are never archived regardless of status.
+
 **Avoid redundant invocations** — if this skill was already invoked earlier in the session and the board has not been modified since, reuse the previous board data instead of invoking again.
 
 Ask the user to approve, reject, or cherry-pick which changes to apply. Then execute only the approved changes:
 
-- **Status updates**: Use `/board:board-edit` to update status fields
+- **Status updates + archive**: For items reaching a terminal status, update the status field first, then immediately run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file>` in the same step. Never leave an item with a terminal status outside `archive/`.
+- **Status updates (non-terminal)**: Use `/board:board-edit` to update status fields
 - **New tasks**: Invoke `/board:board-add` for each approved new task
-- **Archiving**: Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file1> <file2> ...` directly for approved items
+- **Archive-only** (items already at terminal status): Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file1> <file2> ...` directly

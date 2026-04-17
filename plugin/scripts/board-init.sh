@@ -37,8 +37,13 @@ for dir in tasks planning reference resources archive; do
     dirpath="$BOARD_ROOT/$dir"
     if [[ ! -d "$dirpath" ]]; then
         mkdir -p "$dirpath"
+        touch "$dirpath/.gitkeep"
         created+=("$dirpath/")
     else
+        # Ensure .gitkeep exists even if directory was already created
+        if [[ ! -f "$dirpath/.gitkeep" ]]; then
+            touch "$dirpath/.gitkeep"
+        fi
         skipped+=("$dirpath/ (already exists)")
     fi
 done

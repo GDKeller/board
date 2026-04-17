@@ -1,21 +1,31 @@
 #!/usr/bin/env bash
 # board-lint.sh — Validate all board files for structural and data issues.
-# Usage: board-lint.sh [board_root]
+# Usage: board-lint.sh [--hook|--no-fail] [board_root]
 #   board_root defaults to ./board
+#   --hook / --no-fail: print findings but always exit 0 (for SessionStart hook use)
 #
 # Compatible with bash 3.2+ (macOS default).
 #
 # Exit codes:
-#   0 — no issues (or no board/ directory found)
-#   1 — errors found
+#   0 — no issues (or no board/ directory found, or --hook mode)
+#   1 — errors found (strict mode only)
 #
-# Output format:
-#   ERROR: <file>: <message>
-#   WARN:  <file>: <message>
+# Output:
+#   stdout — summary lines ("Board lint: ...")
+#   stderr — per-file ERROR/WARN findings
 
 set -euo pipefail
 
-BOARD_ROOT="${1:-./board}"
+NO_FAIL=0
+BOARD_ROOT=""
+for arg in "$@"; do
+    case "$arg" in
+        --hook|--no-fail) NO_FAIL=1 ;;
+        -*) echo "Unknown flag: $arg" >&2; exit 2 ;;
+        *)  BOARD_ROOT="$arg" ;;
+    esac
+done
+BOARD_ROOT="${BOARD_ROOT:-./board}"
 
 # If no board directory exists, report and exit clean (not every project uses board)
 if [[ ! -d "$BOARD_ROOT" ]]; then
@@ -29,35 +39,56 @@ warnings=0
 # Temp files for tracking (avoids bash 4 associative arrays)
 ID_TRACKER=$(mktemp)
 EXISTING_IDS=$(mktemp)
-trap 'rm -f "$ID_TRACKER" "$EXISTING_IDS"' EXIT
+trap 'rm -f "$ID_TRACKER" "$EXISTING_IDS"' EXIT INT TERM HUP
 
 error() {
-    echo "ERROR: $1: $2"
+    echo "ERROR: $1: $2" >&2
     errors=$((errors + 1))
 }
 
 warn() {
-    echo "WARN:  $1: $2"
+    echo "WARN:  $1: $2" >&2
     warnings=$((warnings + 1))
 }
 
 # --- Helpers ---
 
-# Extract a frontmatter field value from a file (first 30 lines)
+# Extract a frontmatter field value from a file.
+# Reads the full frontmatter block (between the first two --- fences), tolerates
+# CRLF line endings, preserves internal whitespace, and strips surrounding
+# whitespace plus optional surrounding quotes.
 get_field() {
     local file="$1" key="$2"
-    local match
-    match=$(head -30 "$file" | sed -n '/^---$/,/^---$/p' | grep "^${key}:" | head -1 || true)
-    if [[ -z "$match" ]]; then
+    [[ -r "$file" ]] || { echo ""; return; }
+    local raw
+    raw=$(awk -v k="$key" '
+        /^---[[:space:]]*\r?$/ { if (in_fm) exit; in_fm=1; next }
+        in_fm && index($0, k ":") == 1 { print; exit }
+    ' "$file" 2>/dev/null)
+    if [[ -z "$raw" ]]; then
         echo ""
         return
     fi
-    echo "$match" | sed "s/^${key}:[[:space:]]*//" | sed "s/^[\"']//" | sed "s/[\"']$//" | tr -d ' '
+    # Trim, strip key: prefix, strip surrounding quotes. sed may legitimately
+    # return the input unchanged, so we do not guard with `|| true`.
+    printf '%s' "$raw" | sed -e 's/\r$//' \
+                            -e "s/^${key}:[[:space:]]*//" \
+                            -e 's/[[:space:]]*$//' \
+                            -e 's/^"\(.*\)"$/\1/' \
+                            -e "s/^'\(.*\)'\$/\1/"
 }
 
-# Check if frontmatter exists
+# Check if the file opens with a valid YAML frontmatter fence (CRLF-tolerant).
 has_frontmatter() {
-    head -1 "$1" | grep -q '^---$'
+    local first
+    first=$(head -1 "$1" 2>/dev/null | tr -d '\r')
+    [[ "$first" == "---" ]]
+}
+
+# Check that the file has a closing --- fence after the opening one.
+# Returns 0 if both fences are present, 1 otherwise.
+has_closed_frontmatter() {
+    awk '/^---[[:space:]]*\r?$/ { c++; if (c >= 2) { ok=1; exit } } END { exit (ok ? 0 : 1) }' "$1"
 }
 
 # --- Per-file validation ---
@@ -74,6 +105,16 @@ validate_file() {
         if [[ "$basename" == *.md && "$basename" != "README.md" ]]; then
             warn "$file" "Filename does not match TYPE-NNNN_kebab-case.md pattern"
         fi
+        return
+    fi
+
+    # Reject empty or unreadable files up front
+    if [[ ! -s "$file" ]]; then
+        error "$file" "File is empty"
+        return
+    fi
+    if [[ ! -r "$file" ]]; then
+        error "$file" "File is not readable"
         return
     fi
 
@@ -95,9 +136,13 @@ validate_file() {
     # Track existing IDs for reference validation
     echo "$id_key" >> "$EXISTING_IDS"
 
-    # Check frontmatter exists
+    # Check frontmatter exists and is closed
     if ! has_frontmatter "$file"; then
         error "$file" "Missing YAML frontmatter (no opening ---)"
+        return
+    fi
+    if ! has_closed_frontmatter "$file"; then
+        error "$file" "Unterminated YAML frontmatter (missing closing ---)"
         return
     fi
 
@@ -129,11 +174,13 @@ validate_file() {
         error "$file" "Type mismatch: filename says $file_type but frontmatter says type: $type"
     fi
 
-    # Check created field
+    # Check created field (required per spec)
     local created
     created="$(get_field "$file" "created")"
     if [[ -z "$created" ]]; then
-        warn "$file" "Missing field: created"
+        error "$file" "Missing required field: created"
+    elif ! echo "$created" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+        warn "$file" "Field 'created' is not in YYYY-MM-DD format: $created"
     fi
 
     # --- Type-specific validation ---
@@ -153,6 +200,14 @@ validate_file() {
             if [[ "$dir" != "tasks" && "$dir" != "archive" ]]; then
                 error "$file" "Task is in wrong directory '$dir' (should be tasks/ or archive/)"
             fi
+
+            # Status-location consistency
+            if [[ "$status" == "done" && "$dir" != "archive" ]]; then
+                warn "$file" "Task has status 'done' but is not in archive/"
+            fi
+            if [[ "$dir" == "archive" && "$status" != "done" ]]; then
+                error "$file" "Task is in archive/ but status is '${status:-<missing>}' (expected done)"
+            fi
             ;;
 
         epic)
@@ -164,6 +219,14 @@ validate_file() {
 
             if [[ "$dir" != "planning" && "$dir" != "archive" ]]; then
                 error "$file" "Epic is in wrong directory '$dir' (should be planning/ or archive/)"
+            fi
+
+            # Status-location consistency
+            if [[ "$status" == "done" && "$dir" != "archive" ]]; then
+                warn "$file" "Epic has status 'done' but is not in archive/"
+            fi
+            if [[ "$dir" == "archive" && "$status" != "done" ]]; then
+                error "$file" "Epic is in archive/ but status is '${status:-<missing>}' (expected done)"
             fi
             ;;
 
@@ -177,7 +240,9 @@ validate_file() {
             local context_date
             context_date="$(get_field "$file" "context_date")"
             if [[ -z "$context_date" ]]; then
-                warn "$file" "Missing field: context_date"
+                error "$file" "Missing required field: context_date"
+            elif ! echo "$context_date" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+                warn "$file" "Field 'context_date' is not in YYYY-MM-DD format: $context_date"
             fi
 
             if [[ "$dir" == "archive" ]]; then
@@ -207,11 +272,19 @@ validate_file() {
             local url
             url="$(get_field "$file" "url")"
             if [[ -z "$url" ]]; then
-                warn "$file" "Missing field: url"
+                error "$file" "Missing required field: url"
             fi
 
             if [[ "$dir" != "resources" && "$dir" != "archive" ]]; then
                 error "$file" "Resource is in wrong directory '$dir' (should be resources/ or archive/)"
+            fi
+
+            # Status-location consistency
+            if [[ "$status" == "processed" && "$dir" != "archive" ]]; then
+                warn "$file" "Resource has status 'processed' but is not in archive/"
+            fi
+            if [[ "$dir" == "archive" && "$status" != "processed" ]]; then
+                error "$file" "Resource is in archive/ but status is '${status:-<missing>}' (expected processed)"
             fi
             ;;
 
@@ -225,59 +298,106 @@ validate_file() {
             if [[ "$dir" != "planning" && "$dir" != "archive" ]]; then
                 error "$file" "Note is in wrong directory '$dir' (should be planning/ or archive/)"
             fi
+
+            # Status-location consistency
+            if [[ "$status" == "processed" && "$dir" != "archive" ]]; then
+                warn "$file" "Note has status 'processed' but is not in archive/"
+            fi
+            if [[ "$dir" == "archive" && "$status" != "processed" ]]; then
+                error "$file" "Note is in archive/ but status is '${status:-<missing>}' (expected processed)"
+            fi
+            ;;
+
+        *)
+            error "$file" "Unknown type '$type' (must be task|epic|adr|reference|resource|note)"
             ;;
     esac
 }
 
-# --- Validate blocked_by references ---
+# --- Validate cross-references ---
 
+# Extract scalar or block-list value for a frontmatter field.
+# Handles:
+#   field: TASK-0001
+#   field: [TASK-0001, TASK-0002]
+#   field:
+#     - TASK-0001
+#     - TASK-0002
+# CRLF-tolerant. Emits the raw field contents (may span multiple lines).
+get_field_raw() {
+    local file="$1" field="$2"
+    awk -v f="$field" '
+        /^---[[:space:]]*\r?$/ { if (in_fm) exit; in_fm=1; next }
+        !in_fm { next }
+        {
+            if (index($0, f ":") == 1) {
+                in_field = 1
+                val = substr($0, length(f) + 2)
+                sub(/\r$/, "", val)
+                sub(/^[[:space:]]+/, "", val)
+                if (val != "") print val
+                next
+            }
+            if (in_field) {
+                line = $0
+                sub(/\r$/, "", line)
+                if (line ~ /^[[:space:]]+-[[:space:]]/) {
+                    sub(/^[[:space:]]+-[[:space:]]+/, "", line)
+                    print line
+                    next
+                }
+                # Any non-indented / non-list-item line ends this field.
+                in_field = 0
+            }
+        }
+    ' "$file" 2>/dev/null
+}
+
+# Check that every TYPE-NNNN reference in the given field exists in EXISTING_IDS.
+check_refs() {
+    local file="$1" field="$2"
+    local raw
+    raw=$(get_field_raw "$file" "$field")
+    [[ -z "$raw" ]] && return
+    local refs
+    refs=$(printf '%s\n' "$raw" | grep -oE '(TASK|EPIC|ADR|REFE|RESO|NOTE)-[0-9]{4}' || true)
+    for ref in $refs; do
+        if ! grep -qx "$ref" "$EXISTING_IDS" 2>/dev/null; then
+            warn "$file" "$field references $ref which does not exist"
+        fi
+    done
+}
+
+# Validate every reference-bearing frontmatter field across all typed files.
 validate_references() {
-    for dir in tasks archive; do
-        local dirpath="$BOARD_ROOT/$dir"
+    local dir dirpath file basename
+    for dir in tasks planning reference resources archive; do
+        dirpath="$BOARD_ROOT/$dir"
         [[ -d "$dirpath" ]] || continue
-        for file in "$dirpath"/TASK-*.md; do
+        for file in "$dirpath"/*.md; do
             [[ -f "$file" ]] || continue
-
-            # Extract blocked_by content from frontmatter
-            local blocked_by=""
-            local in_fm=0 in_bb=0
-            while IFS= read -r line; do
-                if [[ "$line" == "---" ]]; then
-                    if [[ $in_fm -eq 1 ]]; then break; fi
-                    in_fm=1; continue
-                fi
-                if [[ $in_fm -eq 1 ]]; then
-                    if [[ "$line" == blocked_by:* ]]; then
-                        local val="${line#blocked_by:}"
-                        val="${val#"${val%%[![:space:]]*}"}"
-                        if [[ -n "$val" ]]; then
-                            blocked_by="$val"
-                        else
-                            in_bb=1
-                        fi
-                    elif [[ $in_bb -eq 1 && "$line" =~ ^[[:space:]]+-[[:space:]] ]]; then
-                        blocked_by="$blocked_by ${line#*- }"
-                    elif [[ $in_bb -eq 1 ]]; then
-                        in_bb=0
-                    fi
-                fi
-            done < "$file"
-
-            # Parse TASK-NNNN references and check they exist
-            if [[ -n "$blocked_by" ]]; then
-                local refs
-                refs=$(echo "$blocked_by" | grep -oE 'TASK-[0-9]{4}' || true)
-                for ref in $refs; do
-                    if ! grep -q "^${ref}$" "$EXISTING_IDS" 2>/dev/null; then
-                        warn "$file" "blocked_by references $ref which does not exist"
-                    fi
-                done
+            basename="$(basename "$file")"
+            if ! echo "$basename" | grep -qE '^(TASK|EPIC|ADR|REFE|RESO|NOTE)-[0-9]{4}_.+\.md$'; then
+                continue
             fi
+            check_refs "$file" "blocked_by"
+            check_refs "$file" "parent"
+            check_refs "$file" "spawned"
+            check_refs "$file" "superseded_by"
+            check_refs "$file" "supersedes"
         done
     done
 }
 
 # --- Main ---
+
+# Check required directories exist
+for dir in tasks planning reference resources archive; do
+    dirpath="$BOARD_ROOT/$dir"
+    if [[ ! -d "$dirpath" ]]; then
+        error "$BOARD_ROOT" "Missing required directory: $dir/"
+    fi
+done
 
 # Scan all active directories
 for dir in tasks planning reference resources; do
@@ -306,11 +426,10 @@ if [[ $errors -eq 0 && $warnings -eq 0 ]]; then
     echo "Board lint: all files valid."
     exit 0
 elif [[ $errors -eq 0 ]]; then
-    echo ""
     echo "Board lint: $warnings warning(s), 0 errors."
     exit 0
 else
-    echo ""
     echo "Board lint: $errors error(s), $warnings warning(s)."
+    [[ $NO_FAIL -eq 1 ]] && exit 0
     exit 1
 fi

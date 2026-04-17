@@ -136,8 +136,14 @@ When the user asks to convert or retype an item (e.g., "convert TASK-0022 to a n
 
 1. Apply the edit via targeted frontmatter field replacement (use Edit tool, not full file rewrite)
 2. If renaming, use `git mv` for the file and update the `# heading`
-3. Show a summary of what changed: `TASK-0003: status backlog → current`
-4. If the edit unblocks other tasks (a blocker was marked `done`), mention which tasks are now unblocked
+3. **If the status change results in a terminal status** (`done` for tasks/epics, `processed` for resources/notes), archive the item immediately after updating the status:
+   ```bash
+   bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file_path>
+   ```
+   ADRs are the sole exception — they are never archived regardless of status.
+   If the user explicitly asks NOT to archive, respect that but note the lint warning they will see.
+4. Show a summary of what changed: `TASK-0003: status backlog → done → archived`
+5. If the edit unblocks other tasks (a blocker was marked `done`), mention which tasks are now unblocked
 
 ## Notes
 
