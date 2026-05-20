@@ -3,7 +3,6 @@ name: board-edit
 description: "Modifies existing board items — changes status, priority, blockers, titles, body content, and type (convert/retype) with validation of status transitions, ADR immutability, and imperative mood enforcement. Activates when the user asks to edit, update, change, convert, or retype a board item, or via '/board:board-edit'."
 argument-hint: "[item-id] [field] [value]"
 allowed-tools: Bash, Read, Edit, Write, Glob, Grep, AskUserQuestion
-disable-model-invocation: true
 ---
 
 # Edit Board Item

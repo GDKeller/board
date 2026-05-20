@@ -3,7 +3,6 @@ name: board-add
 description: "Creates new board items (tasks, epics, ADRs, notes, references, resources) with correct frontmatter, ID assignment, and duplicate detection. Activates when the user asks to add, create, or track a new board item, or via '/board:board-add'."
 argument-hint: "[type] [title]"
 allowed-tools: Bash, Read, Write, Glob, AskUserQuestion
-disable-model-invocation: true
 ---
 
 # Add Board Item

@@ -12,16 +12,16 @@ BoardPM is a plain-text project management framework for human-AI collaboration.
 plugin/                       # Claude Code plugin (primary distribution)
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest
-├── commands/
-│   └── init.md              # /board:board-init — scaffold board into a project
-├── skills/                  # 7 plugin skills (use scripts for efficiency)
-│   ├── add/                 # /board:board-add — create new board items
-│   ├── show/                # /board:board-show — display board overview
-│   ├── check/               # /board:board-check — search for relevant context
-│   ├── edit/                # /board:board-edit — modify existing board items
-│   ├── update/              # /board:board-update — reconcile board with codebase
-│   ├── archive/             # /board:board-archive — archive completed items
-│   └── lint/                # /board:board-lint — validate board file health
+├── skills/                  # Plugin skills (use scripts for efficiency)
+│   ├── board-init/          # /board:board-init — scaffold board into a project
+│   ├── board-add/           # /board:board-add — create new board items
+│   ├── board-show/          # /board:board-show — display board overview
+│   ├── board-check/         # /board:board-check — search for relevant context
+│   ├── board-edit/          # /board:board-edit — modify existing board items
+│   ├── board-update/        # /board:board-update — reconcile board with codebase
+│   ├── board-archive/       # /board:board-archive — archive completed items
+│   ├── board-migrate/       # /board:board-migrate — import existing docs into the board
+│   └── board-lint/          # /board:board-lint — validate board file health
 ├── scripts/                 # Bash helpers (save context vs Glob/Grep)
 │   ├── board-scan.sh        # Parse all board files to TSV
 │   ├── board-init.sh        # Scaffold board directories + templates

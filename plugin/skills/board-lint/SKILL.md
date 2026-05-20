@@ -2,7 +2,6 @@
 name: board-lint
 description: "Validates board files for structural integrity — checks frontmatter, status values, directory placement, duplicate IDs, and broken references, then offers interactive fixes. Activates when the user asks to lint or validate the board, or when board-lint.sh reports errors on session startup, or via '/board:board-lint'."
 allowed-tools: Bash, Read, Edit, Glob, AskUserQuestion
-disable-model-invocation: true
 ---
 
 # Board Lint

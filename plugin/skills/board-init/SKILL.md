@@ -1,7 +1,8 @@
 ---
 name: board-init
-description: "Initialize the board system in the current project"
+description: "Scaffolds the board/ directory structure, ID tracking file, and CLAUDE.md snippet into a project. Idempotent — safe to re-run. Activates when the user asks to initialize, set up, or scaffold the board, or via '/board:board-init'."
 allowed-tools: Bash, Read, Write, Edit, AskUserQuestion
+disable-model-invocation: true
 ---
 
 # Initialize Board System

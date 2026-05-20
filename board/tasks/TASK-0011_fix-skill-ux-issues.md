@@ -18,7 +18,7 @@ The UX review identified several prompt engineering and usability issues across 
 
 Reword in `show`, `check`, `edit`, `archive` from "if this skill was already invoked earlier..." to: "If board data from this skill is already present in context and no board modifications have been made since, use that data rather than invoking this skill again."
 
-### `/board:board-init` (plugin/commands/init.md)
+### `/board:board-init` (plugin/skills/board-init/SKILL.md)
 
 1. Add `/board:board-lint` to the available commands summary
 2. Fix re-init description — it says "overwrite spec files" but `board-init.sh` is fully idempotent and skips existing files

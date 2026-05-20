@@ -1,10 +1,13 @@
 {
   "name": "board",
+  "displayName": "Board",
   "version": "0.1.0",
   "description": "Plain-text project management board system for human-AI collaboration",
   "author": {
-    "name": "Grant"
+    "name": "Grant Keller",
+    "email": "contact@grantkeller.dev",
+    "url": "https://github.com/gdkeller"
   },
-  "license": "MIT",
-  "keywords": ["project-management", "task-tracking", "markdown", "plain-text"]
+  "repository": "https://github.com/gdkeller/board",
+  "keywords": ["project-management", "task-tracking", "kanban", "agile", "markdown", "plain-text", "claude-code"]
 }
