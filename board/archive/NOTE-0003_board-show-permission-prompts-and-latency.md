@@ -15,7 +15,7 @@ When running `/board-show` in a project, the `for` loop with `$()` substitution 
 Example prompt seen:
 
 ```
-for f in /Users/grant/code/davantsystems.github.io/board/planning/*.md; do echo "===FILE: $(basename $f)==="; head -30
+for f in <project-root>/board/planning/*.md; do echo "===FILE: $(basename $f)==="; head -30
 "$f"; echo; done
 Read frontmatter from all planning files
 
