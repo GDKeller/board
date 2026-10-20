@@ -1,10 +1,10 @@
 ---
-id: NOTE-0005
-title: Skills reference spec path but don't ensure it gets read
 type: note
 status: inbox
 created: 2026-03-26
 ---
+
+# NOTE-0005: Skills reference spec path but don't ensure it gets read
 
 ## Observation
 

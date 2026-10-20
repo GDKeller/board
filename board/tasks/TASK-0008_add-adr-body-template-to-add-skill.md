@@ -14,7 +14,7 @@ The `/board:board-add` skill provides detailed frontmatter templates for all six
 
 ## Changes Required
 
-### In `plugin/skills/add/SKILL.md`
+### In `plugin/skills/board-add/SKILL.md`
 
 After the frontmatter templates section, add body templates for structured types:
 
@@ -40,4 +40,4 @@ Also add a post-creation reminder: "For ADRs, confirm the user has addressed the
 
 ### Non-git fallback for edit skill
 
-While in this area, also add a note to `plugin/skills/edit/SKILL.md` for the rename/retype paths: "If the project is not a git repository, use plain `mv` instead of `git mv`."
+While in this area, also add a note to `plugin/skills/board-edit/SKILL.md` for the rename/retype paths: "If the project is not a git repository, use plain `mv` instead of `git mv`."

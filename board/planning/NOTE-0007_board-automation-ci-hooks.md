@@ -95,7 +95,7 @@ The plugin already has a `SessionStart` hook that runs `board-lint.sh` (see `plu
 |------------|-----------|-----------|
 | `SessionStart` | board-lint | Already implemented. Surfaces issues immediately. |
 | `Stop` | board-lint | Re-validate after a session that touched board files. Catch anything introduced during the session. |
-| `Stop` | board-update (prompt-based) | After a work session, prompt the user: "Board items may need updating based on this session. Run /board:update?" This is a nudge, not an automatic action. |
+| `Stop` | board-update (prompt-based) | After a work session, prompt the user: "Board items may need updating based on this session. Run /board:board-update?" This is a nudge, not an automatic action. |
 | `PostToolUse` (on `Write`/`Edit` to `board/**`) | board-lint (targeted) | Lint only the file just written/edited. Immediate feedback without waiting for session end. |
 
 ### Tradeoffs
@@ -111,7 +111,7 @@ The plugin already has a `SessionStart` hook that runs `board-lint.sh` (see `plu
 ### Recommendation
 
 - Keep `SessionStart` lint as-is
-- Add a `Stop` hook that runs lint and, if board files were touched, suggests running `/board:update`
+- Add a `Stop` hook that runs lint and, if board files were touched, suggests running `/board:board-update`
 - `PostToolUse` lint is nice in theory but may be too chatty — defer unless users report wanting it
 
 ---

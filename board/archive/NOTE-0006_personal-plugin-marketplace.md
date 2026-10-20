@@ -1,10 +1,14 @@
 ---
-id: NOTE-0006
-title: Set up personal GitHub plugin marketplace for proper distribution
 type: note
-status: inbox
+status: processed
 created: 2026-03-26
 ---
+
+# NOTE-0006: Set up personal GitHub plugin marketplace for proper distribution
+
+## Outcome
+
+Processed 2026-09-24. The repo itself now acts as a single-plugin marketplace via `.claude-plugin/marketplace.json` (source `./plugin`), hosted at <https://github.com/GDKeller/BoardPM>. Install steps live in the README. No separate board items were needed.
 
 ## Observation
 

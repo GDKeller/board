@@ -32,4 +32,4 @@ fi
 printf '%04d\n' "$next_id"
 ```
 
-Also update `plugin/skills/add/SKILL.md` to remove any instruction for the LLM to manually update `.doc-ids` (the script handles it now).
+Also update `plugin/skills/board-add/SKILL.md` to remove any instruction for the LLM to manually update `.doc-ids` (the script handles it now).
