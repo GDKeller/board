@@ -44,7 +44,7 @@ is_resolved() {
     local blocker_id="$1"
     local blocker_line
     # Match on filepath column (column 1) which contains the ID in the filename
-    blocker_line="$(printf '%s\n' "$tsv_active" | grep "/${blocker_id}_" || true)"
+    blocker_line="$(printf '%s\n' "$tsv_active" | grep -F -- "/${blocker_id}_" || true)"
     if [[ -z "$blocker_line" ]]; then
         # Blocker not in active items — might be archived (done) or missing
         if [[ -d "$BOARD_ROOT/archive" ]]; then
@@ -132,45 +132,44 @@ while IFS=$'\t' read -r filepath type status priority blocked_by parent title; d
         task)
             case "$status" in
                 current)
-                    current_tasks="${current_tasks}${item_id}	${clean_title}	${priority}	${blocked_by}
-"
+                    printf -v row '%s\t%s\t%s\t%s\n' "$item_id" "$clean_title" "$priority" "$blocked_by"
+                    current_tasks+="$row"
                     task_current=$((task_current + 1))
                     ;;
                 backlog)
+                    printf -v row '%s\t%s\t%s\t%s\n' "$item_id" "$clean_title" "$priority" "$blocked_by"
                     if is_blocked "$blocked_by"; then
-                        backlog_blocked="${backlog_blocked}${item_id}	${clean_title}	${priority}	${blocked_by}
-"
+                        backlog_blocked+="$row"
                         task_backlog_blocked=$((task_backlog_blocked + 1))
                     else
-                        backlog_ready="${backlog_ready}${item_id}	${clean_title}	${priority}	${blocked_by}
-"
+                        backlog_ready+="$row"
                         task_backlog_ready=$((task_backlog_ready + 1))
                     fi
                     ;;
             esac
             ;;
         epic)
-            epics="${epics}${item_id}	${clean_title}	${status}
-"
+            printf -v row '%s\t%s\t%s\n' "$item_id" "$clean_title" "$status"
+            epics+="$row"
             case "$status" in
                 current) epic_current=$((epic_current + 1)) ;;
                 planning) epic_planning=$((epic_planning + 1)) ;;
             esac
             ;;
         adr)
-            adrs="${adrs}${item_id}	${clean_title}	${status}
-"
+            printf -v row '%s\t%s\t%s\n' "$item_id" "$clean_title" "$status"
+            adrs+="$row"
             ;;
         note)
             if [[ "$status" == "inbox" ]]; then
-                notes_inbox="${notes_inbox}${item_id}	${clean_title}
-"
+                printf -v row '%s\t%s\n' "$item_id" "$clean_title"
+                notes_inbox+="$row"
             fi
             ;;
         resource)
             if [[ "$status" == "inbox" || "$status" == "processing" ]]; then
-                resource_inbox="${resource_inbox}${item_id}	${clean_title}	${status}
-"
+                printf -v row '%s\t%s\t%s\n' "$item_id" "$clean_title" "$status"
+                resource_inbox+="$row"
             fi
             ;;
     esac
@@ -194,7 +193,7 @@ epic_progress() {
         for f in "$BOARD_ROOT/archive"/TASK-*.md; do
             [[ -f "$f" ]] || continue
             local file_parent=""
-            file_parent="$(awk '/^---$/{fm++; next} fm==1 && /^parent:/{sub(/^parent:[[:space:]]*/,""); gsub(/[[:space:]]*$/,""); gsub(/"/,""); print; exit}' "$f")"
+            file_parent="$(awk '/^---[[:space:]]*\r?$/{fm++; next} fm==1 && /^parent:/{sub(/^parent:[[:space:]]*/,""); gsub(/[[:space:]\r]*$/,""); gsub(/"/,""); gsub(/\[|\]/,""); print; exit}' "$f")"
             if [[ "$file_parent" == "$epic_id" ]]; then
                 total=$((total + 1))
                 done=$((done + 1))
@@ -205,8 +204,10 @@ epic_progress() {
 }
 
 # --- Sort helper: sort lines by priority (field 3, numeric) then by ID (field 1) ---
+# A missing priority ("-") sorts last, not first.
 sort_by_priority() {
-    printf '%s' "$1" | sort -t$'\t' -k3,3n -k1,1
+    printf '%s' "$1" | awk -F'\t' -v OFS='\t' '{ print ($3 == "-" ? 9 : $3), $0 }' \
+        | sort -t$'\t' -k1,1n -k2,2 | cut -f2-
 }
 
 # --- Output ---
