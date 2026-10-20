@@ -2,6 +2,8 @@
 .specstory/
 .cache/
 
+# Local-only Claude Code settings (permissions, etc.)
+.claude/settings.local.json
 
-#Ignore vscode AI rules
+# VS Code AI rules files
 .github/instructions/codacy.instructions.md
