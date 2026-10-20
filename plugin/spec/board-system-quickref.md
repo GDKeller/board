@@ -36,7 +36,9 @@ TYPE-NNNN_kebab-case-description.md
 | `2` | Medium |
 | `3` | Low |
 
-## Required Frontmatter
+## Frontmatter Templates
+
+Only `type`, `created`, and `status` (for types that have one) are required; `priority` and every other field is optional.
 
 **Task:**
 ```yaml
@@ -186,9 +188,10 @@ TASK: "Decide on X" → ADR → TASK(s) for implementation
 ## Task Dependencies
 
 ```yaml
-blocked_by: ["[[TASK-0001]]", "[[TASK-0003]]"]
+blocked_by: [TASK-0001, TASK-0003]
 ```
 
+- Reference fields (`blocked_by`, `parent`, `spawned`) hold bare IDs; wiki-links go in body text
 - `blocked_by` is **informational** (documents dependency)
 - Status stays `backlog` (no separate "blocked" status)
 - "Actionable" is **derived** (computed), not stored
@@ -196,7 +199,7 @@ blocked_by: ["[[TASK-0001]]", "[[TASK-0003]]"]
 
 ## Archiving
 
-- Tasks with `status: done` → move to `board/archive/`
+- Tasks and epics with `status: done` → move to `board/archive/`
 - Resources with `status: processed` → move to `board/archive/`
 - Notes with `status: processed` → move to `board/archive/`
 - **ADRs are never archived** — stay in `board/planning/`

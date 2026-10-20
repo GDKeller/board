@@ -108,6 +108,8 @@ A TASK is a single, completable unit of work. If it can't be done in one focused
 
 The `blocked_by` field documents task dependencies. It is **informational**, not a system-enforced constraint.
 
+Reference fields in frontmatter (`blocked_by`, `parent`, `spawned`, `superseded_by`, `tasks`) hold bare IDs: `parent: EPIC-0001`, `blocked_by: [TASK-0001, TASK-0002]`, or a YAML block list. Wiki-links (`[[TASK-0001]]`) belong in body text, where editors like Obsidian resolve them.
+
 **Key points:**
 - Status remains workflow-only (`backlog`/`current`/`done`) — no separate "blocked" status
 - A task with `blocked_by` stays in `backlog` until blockers are `done`
@@ -213,7 +215,7 @@ Explicit list of artifacts created from this ADR. **All outcomes must be resolve
 
 - [[REFE-0008_smoothing-algorithms]] — domain knowledge extracted
 - [[TASK-0010_research-bilateral-filtering]] — follow-up exploration
-- No other action needed.
+- Or, when nothing was spawned: "No follow-up needed."
 ```
 
 #### What ADRs Can Spawn
@@ -310,7 +312,7 @@ Resources are external material to be processed — articles, repos, videos, doc
 #### Resource Document Structure
 
 ```markdown
-# Resource Title
+# RESO-NNNN: Resource Title
 
 ## Why Interesting
 <!-- Your initial notes on why you're saving this -->
@@ -387,12 +389,12 @@ type: note
 status: processed
 created: 2026-01-15
 spawned:
-  - "[[TASK-0012]]"
-  - "[[TASK-0013]]"
-  - "[[REFE-0005]]"
+  - TASK-0012
+  - TASK-0013
+  - REFE-0005
 ---
 
-# Original Note Title
+# NOTE-NNNN: Original Note Title
 
 [Original content preserved...]
 ```
@@ -424,6 +426,7 @@ TYPE-NNNN_kebab-case-description.md
 - IDs are globally unique per type (not per directory)
 - Archived files keep their original ID
 - IDs provide stable references even if title changes
+- The first `# ` heading in the file is the title and carries the ID: `# TASK-0001: Add user authentication`
 
 ### Benefits
 
@@ -509,7 +512,7 @@ If a reference doc has actionable items, extract them into separate TASK files.
 
 ## Archiving
 
-When a task is `done`, resource is `processed`, or note is `processed`:
+When a task or epic is `done`, a resource is `processed`, or a note is `processed`:
 
 1. Update `status` field
 2. Move file to `board/archive/` subdirectory
