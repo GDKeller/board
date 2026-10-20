@@ -2,7 +2,8 @@
 # archive-batch.sh — Move board items to the archive directory.
 # Usage: archive-batch.sh <board_root> <file1> [file2] [file3] ...
 #
-# Uses git mv if inside a git repo, plain mv otherwise.
+# Uses git mv for tracked files inside a git repo, plain mv otherwise
+# (so items created and completed before their first commit still archive).
 # Skips ADR files (they are never archived).
 # Reports what was moved and what was skipped.
 
@@ -64,7 +65,7 @@ for file in "$@"; do
         continue
     fi
 
-    if $use_git; then
+    if $use_git && git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
         err_output=$(git mv "$file" "$dest" 2>&1) || {
             skipped+=("$file (git mv failed: $err_output)")
             continue

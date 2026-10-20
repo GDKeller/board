@@ -2,7 +2,8 @@
 # board-lint.sh — Validate all board files for structural and data issues.
 # Usage: board-lint.sh [--hook|--no-fail] [board_root]
 #   board_root defaults to ./board
-#   --hook / --no-fail: print findings but always exit 0 (for SessionStart hook use)
+#   --hook / --no-fail: always exit 0, and stay silent when the board is clean or
+#                       there is no board/ directory (for SessionStart hook use)
 #
 # Compatible with bash 3.2+ (macOS default).
 #
@@ -27,9 +28,10 @@ for arg in "$@"; do
 done
 BOARD_ROOT="${BOARD_ROOT:-./board}"
 
-# If no board directory exists, report and exit clean (not every project uses board)
+# If no board directory exists, exit clean (not every project uses board).
+# Hook mode stays silent so projects without a board get no session noise.
 if [[ ! -d "$BOARD_ROOT" ]]; then
-    echo "Board lint: no board/ directory found at $BOARD_ROOT — skipping."
+    [[ $NO_FAIL -eq 1 ]] || echo "Board lint: no board/ directory found at $BOARD_ROOT — skipping."
     exit 0
 fi
 
@@ -144,6 +146,11 @@ validate_file() {
     if ! has_closed_frontmatter "$file"; then
         error "$file" "Unterminated YAML frontmatter (missing closing ---)"
         return
+    fi
+
+    # Every item needs an H1 title — board-scan.sh and board-show.sh display it
+    if ! grep -qE '^# ' "$file"; then
+        warn "$file" "No '# Title' heading found (board views fall back to the filename)"
     fi
 
     # Extract frontmatter values
@@ -423,13 +430,16 @@ validate_references
 # --- Summary ---
 
 if [[ $errors -eq 0 && $warnings -eq 0 ]]; then
-    echo "Board lint: all files valid."
+    [[ $NO_FAIL -eq 1 ]] || echo "Board lint: all files valid."
     exit 0
 elif [[ $errors -eq 0 ]]; then
     echo "Board lint: $warnings warning(s), 0 errors."
     exit 0
+elif [[ $NO_FAIL -eq 1 ]]; then
+    # Findings went to stderr, which the session hook does not surface — point at the skill
+    echo "Board lint: $errors error(s), $warnings warning(s) — run /board:board-lint to review."
+    exit 0
 else
     echo "Board lint: $errors error(s), $warnings warning(s)."
-    [[ $NO_FAIL -eq 1 ]] && exit 0
     exit 1
 fi
