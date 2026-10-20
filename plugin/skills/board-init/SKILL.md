@@ -15,15 +15,15 @@ Scaffold the board project management system into the current project.
 
 Check if a `board/` directory already exists in the project root.
 
-- If it exists, inform the user and ask if they want to re-initialize (which would overwrite spec files but preserve existing board items)
+- If it exists, inform the user and ask if they want to re-run init (safe: the script only creates what is missing and never touches existing board items)
 - If it doesn't exist, proceed with full initialization
 
 ### 2. Run Init Script
 
-Run the initialization script to create directories, copy specs, and set up ID tracking:
+Run the initialization script to create directories and set up ID tracking:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-init.sh ${CLAUDE_PLUGIN_ROOT}
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-init.sh" "${CLAUDE_PLUGIN_ROOT}"
 ```
 
 This creates in one shot:
@@ -61,4 +61,8 @@ Available commands:
   /board:board-check          — find related board context
   /board:board-update         — reconcile board with codebase
   /board:board-archive        — archive completed items
+  /board:board-lint           — validate board files and fix issues
+  /board:board-migrate        — import existing Markdown docs
+
+The board is linted automatically at the start of every session (silent when clean).
 ```

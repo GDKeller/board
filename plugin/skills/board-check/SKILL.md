@@ -33,7 +33,7 @@ Never read all doc files. Never read a file body just to check if it's relevant 
 ### 1. Determine Search Context
 
 From the current work, identify:
-- Feature area or module name (e.g., "inference", "post-processing", "model management")
+- Feature area or module name (e.g., "auth", "billing", "search")
 - Relevant keywords from the task at hand
 - File paths being modified (map to likely doc topics)
 
@@ -41,7 +41,7 @@ From the current work, identify:
 
 Pre-loaded board data:
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --active 2>&1`
 
 Filter by matching titles and filenames against the keywords from step 1. Look for:
 
@@ -62,16 +62,16 @@ Present a brief summary of what's relevant:
 ## Board Context
 
 ### Related Tasks
-- TASK-0005: Optimize PNG compression [backlog, priority 2]
+- TASK-0005: Add rate limiting to the upload endpoint [backlog, priority 2]
   → Directly related to current work
 
 ### Relevant Decisions
-- ADR-0001: Chose native inference over Python bridge
-  → Explains why inference uses this approach
+- ADR-0001: Chose Postgres over MongoDB for the primary store
+  → Explains why the data layer is shaped the way it is
 
 ### Reference Material
-- REFE-0002: Runtime initialization
-  → Documents the startup pipeline being modified
+- REFE-0002: Auth token lifecycle
+  → Documents the flow being modified
 
 ### No Match
 - No existing epic covers this work area

@@ -13,7 +13,7 @@ Create a new item in the `board/` project management system. The system spec is 
 
 Pre-loaded board data for duplicate detection:
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --active 2>&1`
 
 Before creating, check if a similar item already exists. If a close match is found, ask the user if they still want to create a new one.
 
@@ -47,7 +47,7 @@ If no type is given, ask the user what type of item to create.
 Run the ID assignment script:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE> ./board
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh" <TYPE> ./board
 ```
 
 This scans all directories (including `board/archive/` and `.doc-ids`) and returns the next available 4-digit zero-padded ID.

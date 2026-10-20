@@ -19,7 +19,7 @@ If the item ID is ambiguous or missing, search by keyword using Glob on filename
 
 Pre-loaded board data:
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --active 2>&1`
 
 ## Locate the Item
 
@@ -34,7 +34,7 @@ Pre-loaded board data:
 Validate transitions using the script:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-status.sh <type> <from_status> <to_status>
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/validate-status.sh" <type> <from_status> <to_status>
 ```
 
 Exit codes: `0` = valid forward transition, `2` = backward transition (confirm with user), `1` = invalid.
@@ -102,7 +102,7 @@ When the user asks to convert or retype an item (e.g., "convert TASK-0022 to a n
 
 1. **Get next ID** for the target type:
    ```bash
-   bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TARGET_TYPE> ./board
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh" <TARGET_TYPE> ./board
    ```
 2. **Create new file** with:
    - Correct type prefix and ID in filename
@@ -137,7 +137,7 @@ When the user asks to convert or retype an item (e.g., "convert TASK-0022 to a n
 2. If renaming, use `git mv` for the file and update the `# heading`
 3. **If the status change results in a terminal status** (`done` for tasks/epics, `processed` for resources/notes), archive the item immediately after updating the status:
    ```bash
-   bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file_path>
+   bash "${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh" ./board <file_path>
    ```
    ADRs are the sole exception — they are never archived regardless of status.
    If the user explicitly asks NOT to archive, respect that but note the lint warning they will see.

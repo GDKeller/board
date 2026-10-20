@@ -16,7 +16,7 @@ This skill handles the common scenario where a project already has scattered `.m
 
 Current board state (for duplicate/overlap detection):
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --active 2>&1`
 
 ## Steps
 
@@ -144,7 +144,7 @@ For each approved item, in order:
 **a. Assign ID:**
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh <TYPE> ./board
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/next-id.sh" <TYPE> ./board
 ```
 
 **b. Create the new board file** using the correct frontmatter template:
@@ -261,7 +261,7 @@ Present a single consolidated summary:
 - README.md:15 references "docs/api-endpoints.md"
 ```
 
-Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh ./board` and report as a single line: "Board lint: all files valid." or "Board lint: N errors found — run `/board:board-lint` to fix."
+Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-lint.sh" ./board` and report as a single line: "Board lint: all files valid." or "Board lint: N errors found — run `/board:board-lint` to fix."
 
 Only offer follow-up suggestions when something specific warrants them:
 - If a multi-item file was flagged: "Want me to split #3 into individual tasks?"

@@ -1,12 +1,11 @@
 ---
 name: board-show
 description: "Displays a formatted project board overview grouped by status, with priority sorting, epic progress, blocking relationships, and archive statistics. Activates when the user asks to see the board, show tasks, view backlog, or check project status, or via '/board:board-show'."
-allowed-tools: ""
 ---
 
 # Board Overview
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-show.sh ./board`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-show.sh" ./board 2>&1`
 
 Display the above output to the user exactly as-is. Do not modify, reformat, or run any additional commands.
 

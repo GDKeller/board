@@ -12,11 +12,11 @@ Analyze the codebase and git history to automatically reconcile the project boar
 
 Pre-loaded active board data:
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --active`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --active 2>&1`
 
 Archive counts:
 
-!`bash ${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh ./board --archive-summary`
+!`bash "${CLAUDE_PLUGIN_ROOT}/scripts/board-scan.sh" ./board --archive-summary 2>&1`
 
 ## Steps
 
@@ -98,7 +98,7 @@ ADRs are the sole exception — they are never archived regardless of status.
 
 Ask the user to approve, reject, or cherry-pick which changes to apply. Then execute only the approved changes:
 
-- **Status updates + archive**: For items reaching a terminal status, update the status field first, then immediately run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file>` in the same step. Never leave an item with a terminal status outside `archive/`.
+- **Status updates + archive**: For items reaching a terminal status, update the status field first, then immediately run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh" ./board <file>` in the same step. Never leave an item with a terminal status outside `archive/`.
 - **Status updates (non-terminal)**: Use `/board:board-edit` to update status fields
 - **New tasks**: Invoke `/board:board-add` for each approved new task
-- **Archive-only** (items already at terminal status): Run `bash ${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh ./board <file1> <file2> ...` directly
+- **Archive-only** (items already at terminal status): Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/archive-batch.sh" ./board <file1> <file2> ...` directly
