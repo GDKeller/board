@@ -1,0 +1,24 @@
+{
+  "name": "boardpm",
+  "owner": {
+    "name": "Grant Keller",
+    "email": "contact@grantkeller.dev"
+  },
+  "plugins": [
+    {
+      "name": "board",
+      "source": "./plugin",
+      "displayName": "Board",
+      "description": "Plain-text project management board for human-AI collaboration: tasks, epics, ADRs, notes, and references as Markdown files with YAML frontmatter",
+      "version": "0.1.0",
+      "author": {
+        "name": "Grant Keller",
+        "email": "contact@grantkeller.dev"
+      },
+      "homepage": "https://github.com/GDKeller/BoardPM",
+      "repository": "https://github.com/GDKeller/BoardPM",
+      "keywords": ["project-management", "task-tracking", "kanban", "markdown", "plain-text", "adr", "claude-code"],
+      "category": "productivity"
+    }
+  ]
+}
