@@ -4,11 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-BoardPM is a plain-text project management framework for human-AI collaboration. It defines a structured system of Markdown files with YAML frontmatter for task tracking, decision records, and knowledge management. This is a **boilerplate/template repository** — not a software application. It is designed to be copied into other projects or installed globally via `~/.claude`.
+BoardPM is a plain-text project management framework for human-AI collaboration. It defines a structured system of Markdown files with YAML frontmatter for task tracking, decision records, and knowledge management. This is a **boilerplate/template repository** — not a software application. It is distributed as a Claude Code plugin (`plugin/`), installed from this repo's own marketplace (`/plugin marketplace add GDKeller/BoardPM`, then `/plugin install board@boardpm`) or loaded locally with `claude --plugin-dir ./plugin`.
 
 ## Repository Structure
 
 ```
+.claude-plugin/
+└── marketplace.json         # Marketplace manifest: this repo serves plugin/ as "board@boardpm"
+
 plugin/                       # Claude Code plugin (primary distribution)
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest
@@ -24,7 +27,8 @@ plugin/                       # Claude Code plugin (primary distribution)
 │   └── board-lint/          # /board:board-lint — validate board file health
 ├── scripts/                 # Bash helpers (save context vs Glob/Grep)
 │   ├── board-scan.sh        # Parse all board files to TSV
-│   ├── board-init.sh        # Scaffold board directories + templates
+│   ├── board-show.sh        # Formatted markdown board overview (wraps board-scan.sh)
+│   ├── board-init.sh        # Scaffold board directories + .doc-ids
 │   ├── board-lint.sh        # Validate board files for errors
 │   ├── next-id.sh           # Determine next available ID per type
 │   ├── validate-status.sh   # Validate status transitions
@@ -45,7 +49,7 @@ board/                       # Example board (also used for self-management)
 └── archive/                 # Completed items (ADRs never archived)
 
 docs/                        # Documentation
-└── implementation-guide.md  # Setup instructions for installing in projects
+└── implementation-guide.md  # Setup, ID tracking, migration, and Obsidian integration
 ```
 
 ## Key Specifications
@@ -83,7 +87,7 @@ IDs are 4-digit zero-padded, globally unique per type (not per directory). Archi
 
 ### Next ID Assignment
 
-Scan both `board/` and `board/archive/` for the highest existing ID of each type. If a `.doc-ids` tracking file exists in `board/`, use and update it.
+Scan both `board/` and `board/archive/` for the highest existing ID of each type. If a `.doc-ids` tracking file exists in `board/`, `next-id.sh` also reads it and takes the higher value (nothing writes it back yet).
 
 ## Working on This Repository
 
@@ -98,9 +102,10 @@ All scripts in `plugin/scripts/` are bash 3.2+ compatible (macOS default). They 
 Example invocations from the repo root:
 
 ```bash
-bash plugin/scripts/board-init.sh ./board                    # Scaffold board directories + templates
-bash plugin/scripts/board-scan.sh ./board --active          # TSV of active items
-bash plugin/scripts/board-scan.sh ./board --archive-summary  # Archive counts
+bash plugin/scripts/board-init.sh ./plugin                   # Scaffold ./board here (arg = plugin root, for templates)
+bash plugin/scripts/board-show.sh ./board                    # Formatted board overview
+bash plugin/scripts/board-scan.sh ./board --active           # TSV of active items
+bash plugin/scripts/board-scan.sh ./board --archive-summary  # Archive counts only
 bash plugin/scripts/board-lint.sh ./board                    # Validate all files
 bash plugin/scripts/next-id.sh TASK ./board                  # Next TASK ID
 bash plugin/scripts/validate-status.sh task backlog current  # Check transition
@@ -109,7 +114,7 @@ bash plugin/scripts/archive-batch.sh ./board board/tasks/TASK-0001_example.md
 
 ### Plugin Design Patterns
 
-- **Dynamic context injection**: Skills use `` !`command` `` syntax to run `board-scan.sh` at activation time, injecting fresh board data without stale caches
+- **Dynamic context injection**: Skills use `` !`command` `` syntax to run `board-scan.sh` (or `board-show.sh`, `board-lint.sh`) at activation time, injecting fresh board data without stale caches. Injected commands end in `2>&1` so script errors are visible to the model
 - **TSV output format**: `board-scan.sh` outputs tab-separated data with a header row — compact and self-documenting
 - **`--active` flag**: Excludes `board/archive/` to keep injected context proportional to active work. Critical for scaling — at 50+ active items, injection approaches context budget limits
 - **Progressive escalation**: Skills filter by title (free) → Read with limit:15 (low cost) → full read (moderate) to minimize context consumption

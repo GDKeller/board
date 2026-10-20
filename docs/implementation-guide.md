@@ -6,32 +6,37 @@ This covers tooling-specific setup for the board system. For the framework itsel
 
 ## Installing in a New Project
 
-### 1. Create Directory Structure
+Install the plugin (see the [README](../README.md#install)), then run `/board:board-init` from the project root. It creates:
+
+- `board/{tasks,planning,reference,resources,archive}/`, each with a `.gitkeep`
+- `board/.doc-ids` (ID tracking file)
+- A "Project Board" section appended to your `CLAUDE.md`, taken from `plugin/templates/claude-md-snippet.md`
+
+Re-running init is safe. It only creates what is missing.
+
+### Without the plugin
+
+The board is plain files, so it also works by hand:
 
 ```bash
 mkdir -p board/{tasks,planning,reference,resources,archive}
 ```
 
-### 2. Add to CLAUDE.md
+Then paste `plugin/templates/claude-md-snippet.md` into your `CLAUDE.md` and follow `plugin/spec/board-system-quickref.md` when writing items. You lose the skills, the session-start lint, and script-assigned IDs.
 
-Add the following to your project's `CLAUDE.md`:
+### Skills
 
-```markdown
-## Project Board
-
-This project uses a structured board system for project management. **Ask before creating new board files.**
-```
-
-Projects start REFE numbering at 0001.
-
-### 3. (Optional) Install Claude Skills
-
-Copy the `board-*` skills into your Claude Code skills directory to enable slash commands:
-- `/board:board-add` — Create new board items
-- `/board:board-show` — View board overview
-- `/board:board-check` — Look up relevant board context
-- `/board:board-update` — Reconcile board with codebase
-- `/board:board-archive` — Archive completed items
+| Skill | Purpose |
+|-------|---------|
+| `/board:board-init` | Scaffold the board into a project |
+| `/board:board-show` | Formatted board overview |
+| `/board:board-add` | Create new items with correct frontmatter and IDs |
+| `/board:board-edit` | Change status, priority, blockers, titles, or type |
+| `/board:board-check` | Read-only lookup of items relevant to current work |
+| `/board:board-update` | Reconcile the board with git history and code state |
+| `/board:board-archive` | Move done items to `board/archive/` |
+| `/board:board-lint` | Validate board files and offer fixes |
+| `/board:board-migrate` | Import existing Markdown docs into the board |
 
 ---
 
@@ -208,7 +213,7 @@ curl -X POST \
 ```bash
 curl -H "Accept: application/vnd.olrapi.note+json" \
      -H "Authorization: Bearer $TOKEN" \
-     "http://127.0.0.1:27123/vault/tasks/TASK-0002.md"
+     "http://127.0.0.1:27123/vault/tasks/TASK-0002_example.md"
 ```
 
 ### Query Strategy
@@ -230,17 +235,21 @@ If Obsidian isn't running, read files directly from `board/`. YAML frontmatter i
 
 To assign the next available ID, either:
 
-1. **Manual** — Check highest existing ID for that type across all directories (including `board/archive/`)
-2. **Script** — `./scripts/next-doc-id.sh TASK` outputs next available
-3. **Tracking file** (optional):
+1. **Script** — `bash plugin/scripts/next-id.sh TASK ./board` prints the next available ID (the skills do this for you)
+2. **Manual** — Check the highest existing ID for that type across all directories, including `board/archive/`
+
+The script also reads `board/.doc-ids` if present and takes the higher of the two. `board-init.sh` creates it with every type at zero:
 
 ```
-board/.doc-ids
-TASK=3
-REFE=2
-RESO=2
-NOTE=1
+TASK=0000
+EPIC=0000
+ADR=0000
+REFE=0000
+RESO=0000
+NOTE=0000
 ```
+
+Nothing writes it back yet, so it is a floor, not a ledger.
 
 ---
 
@@ -279,10 +288,12 @@ When creating TASKs that describe significant work:
 
 ## Migrating Existing Docs
 
-To migrate existing documentation into the board system:
+Run `/board:board-migrate [path]`. It discovers stray Markdown files (project root, `docs/`, and any path you pass), proposes a type and title for each, and after you approve the plan creates the board items and removes the originals.
 
-1. Add frontmatter to existing files
-2. Rename with `TYPE-NNNN` prefix
-3. Move to appropriate directory under `board/`
+By hand, the equivalent is:
+
+1. Add frontmatter to each file
+2. Rename with the `TYPE-NNNN_` prefix
+3. Move it to the right directory under `board/`
 4. Update any internal links
-5. Set up vault symlink (if using Obsidian)
+5. Set up the vault symlink (if using Obsidian)
