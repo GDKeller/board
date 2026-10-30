@@ -28,11 +28,11 @@ Most PM tools optimize for humans (kanban boards) or machines (databases), but n
 
 ## Install
 
-This repo doubles as a single-plugin Claude Code marketplace. From inside Claude Code:
+The plugin is published through the [`gdkeller` marketplace](https://github.com/GDKeller/claude-marketplace). From inside Claude Code:
 
 ```
-/plugin marketplace add GDKeller/BoardPM
-/plugin install board@boardpm
+/plugin marketplace add GDKeller/claude-marketplace
+/plugin install board@gdkeller
 ```
 
 To try it from a local checkout without installing:
@@ -107,8 +107,7 @@ A few axioms from the [spec](plugin/spec/board-system-spec.md):
 ## Project layout
 
 ```
-.claude-plugin/marketplace.json   # This repo is also the marketplace that serves the plugin
-plugin/                           # The Claude Code plugin
+plugin/                           # The Claude Code plugin (served by GDKeller/claude-marketplace)
 ├── .claude-plugin/plugin.json
 ├── skills/                       # 9 skills (board-add, board-show, board-edit, …)
 ├── scripts/                      # Bash helpers (bash 3.2 compatible)

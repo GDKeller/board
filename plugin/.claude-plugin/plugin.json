@@ -7,7 +7,7 @@
     "name": "Grant Keller",
     "email": "contact@grantkeller.dev"
   },
-  "homepage": "https://github.com/GDKeller/BoardPM",
-  "repository": "https://github.com/GDKeller/BoardPM",
+  "homepage": "https://github.com/GDKeller/board",
+  "repository": "https://github.com/GDKeller/board",
   "keywords": ["project-management", "task-tracking", "kanban", "markdown", "plain-text", "adr", "claude-code"]
 }

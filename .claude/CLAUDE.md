@@ -4,15 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-BoardPM is a plain-text project management framework for human-AI collaboration. It defines a structured system of Markdown files with YAML frontmatter for task tracking, decision records, and knowledge management. This is a **boilerplate/template repository** — not a software application. It is distributed as a Claude Code plugin (`plugin/`), installed from this repo's own marketplace (`/plugin marketplace add GDKeller/BoardPM`, then `/plugin install board@boardpm`) or loaded locally with `claude --plugin-dir ./plugin`.
+BoardPM is a plain-text project management framework for human-AI collaboration. It defines a structured system of Markdown files with YAML frontmatter for task tracking, decision records, and knowledge management. This is a **boilerplate/template repository** — not a software application. It is distributed as a Claude Code plugin (`plugin/`), installed from the `gdkeller` marketplace (`/plugin marketplace add GDKeller/claude-marketplace`, then `/plugin install board@gdkeller`) or loaded locally with `claude --plugin-dir ./plugin`. That catalog repo points at `plugin/` with a `git-subdir` source, so this repo has no `marketplace.json`, and `version` lives only in `plugin/.claude-plugin/plugin.json`.
 
 ## Repository Structure
 
 ```
-.claude-plugin/
-└── marketplace.json         # Marketplace manifest: this repo serves plugin/ as "board@boardpm"
-
-plugin/                       # Claude Code plugin (primary distribution)
+plugin/                       # Claude Code plugin, served as "board@gdkeller"
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest
 ├── skills/                  # Plugin skills (use scripts for efficiency)
